@@ -31,10 +31,10 @@ public:
 	void collect(unsigned int diceRoll)
 	{
 		for (auto& pTile : tiles)
-			pTile->produce(diceRoll, owner);
+			pTile->produce(diceRoll);
 	}
 
-	bool build(bool bInitial = false);	// bSucceeded
+	bool build(Builder * who, bool bInitial = false);	// bSucceeded
 
 	// a default param of houseType could extend the possibilities for upgrading in different paths (skipping stages)
 	// or if there are multiple non-intersecting paths, creating another status for such cases would be a good soln

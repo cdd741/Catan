@@ -2,7 +2,7 @@
 
 #include "builder.hpp"
 
-bool Address::build(bool bInitial = false)	// bSucceeded
+bool Address::build(Builder * who, bool bInitial = false)	// bSucceeded
 {
 	// criteria checks
 	// 1: no adjacent residences
@@ -24,6 +24,10 @@ bool Address::build(bool bInitial = false)	// bSucceeded
 	}
 
 	type = Basement;
+	owner = who;
+	for (auto & tile : tiles)
+		tile->add_owner(who);
+
 	return true;
 }
 
