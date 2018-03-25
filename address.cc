@@ -20,7 +20,7 @@ bool Address::build(Builder * who, bool bInitial = false)	// bSucceeded
 		if (!nBuilt) return false;	// if no roads connecting to it
 
 									// reject if not enough resources
-		if (!owner->useResources(1, 1, 1, 0, 1)) return false;
+		if (!who->useResources(1, 1, 1, 0, 1)) return false;
 	}
 
 	type = Basement;
