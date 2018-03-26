@@ -17,10 +17,10 @@ struct Road
 	Builder* owner = nullptr;
 };
 
-class Address
+class Building
 {
 public:
-	enum HouseType
+	enum Type
 	{
 		None, Basement, House, Tower
 	};
@@ -37,7 +37,7 @@ public:
 
 	// a default param of houseType could extend the possibilities for upgrading in different paths (skipping stages)
 	// or if there are multiple non-intersecting paths, creating another status for such cases would be a good soln
-	// in the worst case, improve() gets derived in the subclasses for non-default paths/addresses
+	// in the worst case, improve() gets derived in the subclasses for non-default paths/Buildings
 	virtual bool improve() throw(NotImplementedException);
 
 	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
@@ -57,7 +57,7 @@ protected:
 	std::unordered_map<const Address*, Road*> neighbours;
 
 	Builder* owner = nullptr;
-	HouseType type = None;
+	Type type = None;
 };
 
 

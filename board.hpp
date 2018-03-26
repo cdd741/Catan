@@ -67,7 +67,7 @@ public:
 
 protected:
 	Layout* layout = nullptr;
-	std::unordered_set<Address*> addresses;
+	std::unordered_set<Building*> buildings;
 
 };
 
