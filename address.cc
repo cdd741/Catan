@@ -10,12 +10,10 @@ bool Building::build(Builder * who, bool bInitial)	// bSucceeded
 	if (!bInitial)
 	{
 		size_t nBuilt = 0;
-		for (auto& pRoad : roads)
+		for (auto& nb : neighbours)
 		{
-			if (pRoad->ends.size())	// contains adjacent
-				return false;
-			if (pRoad->built)
-				nBuilt++;
+			if (nb.second && nb.second->built) nBuilt++;
+			if (nb.first->type != None) return false;	// adjacent
 		}
 		if (!nBuilt) return false;	// if no roads connecting to it
 

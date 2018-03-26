@@ -42,19 +42,19 @@ public:
 
 	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
 
-	void connect(const Address* other)
+	void connect(const Building* other)
 	{
 		if (!neighbours[other])
 			neighbours[other] = new Road();
 	}
 
-	bool isConnected(const Address* other) const
+	bool isConnected(const Building* other) const
 	{
 		return neighbours.at(other);
 	}
 
 protected:
-	std::unordered_map<const Address*, Road*> neighbours;
+	std::unordered_map<const Building*, Road*> neighbours;
 
 	Builder* owner = nullptr;
 	Type type = None;

@@ -121,7 +121,7 @@ class HexBoard : public Board
 		
 	}
 
-	void _construct(Address* a, Address * b)
+	void _construct(Building * a, Building * b)
 	{
 
 	}
