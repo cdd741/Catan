@@ -2,7 +2,7 @@
 
 #include "builder.hpp"
 
-bool Address::build(Builder * who, bool bInitial = false)	// bSucceeded
+bool Building::build(Builder * who, bool bInitial = false)	// bSucceeded
 {
 	// criteria checks
 	// 1: no adjacent residences
@@ -31,7 +31,7 @@ bool Address::build(Builder * who, bool bInitial = false)	// bSucceeded
 	return true;
 }
 
-bool Address::improve()	// allowing deriving possibilities
+bool Building::improve()	// allowing deriving possibilities
 {
 	switch (type)
 	{
@@ -48,6 +48,6 @@ bool Address::improve()	// allowing deriving possibilities
 		type = Tower;
 		return true;
 	default:
-		throw NotImplementedException("the current houseType is not handled in Address.improve(), perhaps a new houseType is added while handlers are not updated to reflect that.");
+		throw NotImplementedException("the current houseType is not handled in Building.improve(), perhaps a new houseType is added while handlers are not updated to reflect that.");
 	}
 }

@@ -19,14 +19,23 @@ it is also possible to make a class for each type of resources and use Resource*
 details should be discussed sometime in the future
 
 */
+class Building;
+class Road;
+
+enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
+
 class Tile
 {
+	TileType type;
+	std::unordered_set<Building*> Buildings; // save adjacent Buildings (from bz)
+	std::unordered_set<Road*> roads;		// save adjacent roads     (from bz)
+
 public:
 	Tile(unsigned int roll) : roll{ roll } {}
 
 	// this is not necessary though, or not perferred imo (i don't like it personally)
 	// you may convince me to keep/remove this block though
-	// (another approach is to let Address perform those actions instead of letting Tile's know details of Builder(s))
+	// (another approach is to let Building perform those actions instead of letting Tile's know details of Builder(s))
 	// (just some random thoughts), this works though
 	virtual void produce(unsigned int diceRoll)
 	{

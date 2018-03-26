@@ -99,6 +99,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="address.hpp" />
+    <ClInclude Include="board.h" />
     <ClInclude Include="builder.hpp" />
     <ClInclude Include="dice.hpp" />
     <ClInclude Include="builder.cc" />

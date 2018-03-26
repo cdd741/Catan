@@ -5,7 +5,7 @@
 #include <vector>
 
 class Dice;
-class Address;
+class Building;
 
 class Builder
 {
@@ -54,7 +54,7 @@ public:
 
 protected:
 	// the Builder knows exactly what property (s)he owns
-	std::vector<Address*> properties;
+	std::vector<Building*> properties;
 
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
 	
