@@ -33,9 +33,18 @@
     <ClInclude Include="exception.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="board.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resources.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="address.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="board.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

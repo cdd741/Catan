@@ -2,6 +2,7 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <vector>
 #include <unordered_set>
 
 #include "exception.hpp"
@@ -22,41 +23,28 @@ details should be discussed sometime in the future
 class Tile
 {
 public:
-	Tile(unsigned int roll) : roll{ roll } {}
+	Tile(unsigned int roll, size_t nResources = 1) : nResources{ nResources }, roll{ roll } {}
 
 	// this is not necessary though, or not perferred imo (i don't like it personally)
 	// you may convince me to keep/remove this block though
 	// (another approach is to let Address perform those actions instead of letting Tile's know details of Builder(s))
 	// (just some random thoughts), this works though
-	virtual void produce(unsigned int diceRoll)
+	virtual void produce(unsigned int diceRoll, Builder* owner)
 	{
 		if (!bProduction || diceRoll != roll) return;
-		for (auto& owner : owners)
-			owner->addResources();
-		throw NotImplementedException("Tile.produce()");
+		produce_res(owner);
 	}
 
 	// a bit awk to have this flag in public
 	// although Tile is really just a very simple struct-like class
 	bool bProduction = true;
 
-	/* TODO: better naming */
-	void add_owner(Builder * owner)
-	{
-		owners.insert(owner);
-	}
-
-	void remove_owner(Builder * owner)
-	{
-		owners.erase(owner);
-	}
-
 protected:
+	size_t nResources;
+
 	unsigned int roll;	// associated roll # for this Tile to produce resources
 
-	// ensuring each tile could only produce once for each Builder
-	std::unordered_set<Builder*> owners;
-
+	virtual void produce_res(Builder* to) = 0;
 };
 
 #endif

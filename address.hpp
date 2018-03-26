@@ -3,6 +3,7 @@
 #define ADDRESS_H
 
 #include <vector>
+#include <unordered_map>
 
 #include "exception.hpp"
 #include "tile.hpp"
@@ -10,13 +11,10 @@
 class Builder;
 class Tile;
 
-// a road connects ends of Addresses (allows the possibility to extend this into multiple ended roads
-// you may want to convert this to a class if you prefer
 struct Road
 {
 	bool built = false;
 	Builder* owner = nullptr;
-	std::vector<Address*> ends;
 };
 
 class Address
@@ -30,8 +28,9 @@ public:
 	/* a dice roll has occured, collect resources to owner */
 	void collect(unsigned int diceRoll)
 	{
-		for (auto& pTile : tiles)
-			pTile->produce(diceRoll);
+		if (owner)
+			for (auto& pTile : tiles)
+				pTile->produce(diceRoll, owner);
 	}
 
 	bool build(Builder * who, bool bInitial = false);	// bSucceeded
@@ -41,10 +40,23 @@ public:
 	// in the worst case, improve() gets derived in the subclasses for non-default paths/addresses
 	virtual bool improve() throw(NotImplementedException);
 
-protected:
-	Builder* owner = nullptr;
-	std::vector<Road*> roads;	// roads to this address
 	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
+
+	void connect(const Address* other)
+	{
+		if (!neighbours[other])
+			neighbours[other] = new Road();
+	}
+
+	bool isConnected(const Address* other) const
+	{
+		return neighbours.at(other);
+	}
+
+protected:
+	std::unordered_map<const Address*, Road*> neighbours;
+
+	Builder* owner = nullptr;
 	HouseType type = None;
 };
 
