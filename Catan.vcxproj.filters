@@ -47,5 +47,8 @@
     <ClCompile Include="board.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

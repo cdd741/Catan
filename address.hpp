@@ -15,6 +15,7 @@ struct Road
 {
 	bool built = false;
 	Builder* owner = nullptr;
+	bool build(Builder * who);
 };
 
 class Building
@@ -42,10 +43,13 @@ public:
 
 	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
 
-	void connect(const Building* other)
+	void connect(Building* other)
 	{
 		if (!neighbours[other])
+		{
 			neighbours[other] = new Road();
+			other->neighbours[this] = neighbours[other];
+		}
 	}
 
 	bool isConnected(const Building* other) const

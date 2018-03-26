@@ -48,6 +48,8 @@ public:
 	// although Tile is really just a very simple struct-like class
 	bool bProduction = true;
 
+	std::unordered_set<Building*> buildings;
+
 protected:
 	size_t nResources;
 
