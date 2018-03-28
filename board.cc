@@ -1,6 +1,5 @@
 #include "board.hpp"
-#include "builder.hpp"
-#include "resources.hpp"
+
 
 #include "exception.hpp"
 
@@ -58,4 +57,30 @@ void Layout::load(istream& in)
 		}
 	}
 
+}
+
+
+Status Board::buildRoad(Builder* player, int address) {
+	roads[address]->build(player);
+}
+
+Status Board::buildRes(Builder* player, int address) {
+	buildings[address]->build(player);
+}
+
+Status Board::improve(Builder* player, int address) {
+	buildings[address]->build(player);
+}
+
+Status Board::trade(Builder* player1, Builder* player2, resouseType item1, resouseType item2) {
+	player1->trade(item1, item2);
+	player2->trade(item2, item1);
+}
+
+// distribute resourses or goto geeseOcccur if dice is 7
+Status Board::diceRoll(int dice) {
+	if (dice == 7) this->geeseOccur();
+	else for (auto& tile : tiles) {
+		tile->produce(dice)
+	}
 }

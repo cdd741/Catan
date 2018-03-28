@@ -44,17 +44,17 @@ public:
 		produce_res(owner);
 	}
 
+	void distribute(unsigned int diceRoll);
+
+
 	// a bit awk to have this flag in public
 	// although Tile is really just a very simple struct-like class
 	bool bProduction = true;
-
 	std::unordered_set<Building*> buildings;
 
 protected:
 	size_t nResources;
-
 	unsigned int roll;	// associated roll # for this Tile to produce resources
-
 	virtual void produce_res(Builder* to) = 0;
 };
 

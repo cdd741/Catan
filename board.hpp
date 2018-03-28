@@ -2,12 +2,18 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <queue>
 #include <cassert>
 
 #include "address.hpp"
+#include "builder.hpp"
+
+#include "status.hpp"
+#include "resourse.hpp"
+#include "player.hpp"
 
 class Builder;
 class Tile;
@@ -201,12 +207,24 @@ public:
 		return v;
 	}
 
+
+	Status buildRoad(Builder* player, int address);
+	Status buildRes(Builder* player, int address);
+	Status improve(Builder* player, int address);
+	Status trade(Builder* player1, Builder* player2, resouseType item1, resouseType item2);
+	void playerStatus();
+	Status diceRoll(int dice);
+	void geeseOccur();
+	friend std::ostream &operator<<(std::ostream &out, const Board &b);
+
 	virtual	~Board() {}
 
 protected:
 	Layout* layout = nullptr;
 	std::unordered_set<Building*> buildings;
-
+	std::unordered_set<Builder*> builders;
+	std::unordered_set<Tile*> tiles;
+	std::unordered_set<Road*> roads;
 };
 
 

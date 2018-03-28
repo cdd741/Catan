@@ -7,16 +7,19 @@
 
 #include "exception.hpp"
 #include "tile.hpp"
+#include "status.hpp"
 
 class Builder;
 class Tile;
+
 
 struct Road
 {
 	bool built = false;
 	Builder* owner = nullptr;
-	bool build(Builder * who);
+	Status build(Builder * who);
 };
+
 
 class Building
 {
@@ -27,19 +30,18 @@ public:
 	};
 
 	/* a dice roll has occured, collect resources to owner */
-	void collect(unsigned int diceRoll)
-	{
+	void collect(){
 		if (owner)
-			for (auto& pTile : tiles)
+			for (auto& pTile : 1 )
 				pTile->produce(diceRoll, owner);
 	}
 
-	bool build(Builder * who, bool bInitial = false);	// bSucceeded
+	Status build(Builder * who, bool bInitial = false);	// bSucceeded
 
 	// a default param of houseType could extend the possibilities for upgrading in different paths (skipping stages)
 	// or if there are multiple non-intersecting paths, creating another status for such cases would be a good soln
 	// in the worst case, improve() gets derived in the subclasses for non-default paths/Buildings
-	virtual bool improve() throw(NotImplementedException);
+	virtual Status improve() throw(NotImplementedException);
 
 	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
 
