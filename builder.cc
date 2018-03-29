@@ -3,6 +3,7 @@
 #include "dice.hpp"
 #include "address.hpp"
 
+using namespace std;
 bool Builder::winCheck() {
 	return score == 10;
 }
@@ -39,22 +40,58 @@ void Builder::addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass 
 	this->nWifi += nWifi;
 }
 
-bool Builder::trade(resouseType item1, resouseType item2) {
-	if (item1 == resouseType::BRICK && nBrick > 0) --nBrick;
-	else if (item1 == resouseType::ENERGY && nEnergy > 0) --nEnergy;
-	else if (item1 == resouseType::GLASS && nGlass > 0) --nGlass;
-	else if (item1 == resouseType::HEAT && nHeat > 0) --nHeat;
-	else if (item1 == resouseType::WIFI && nWifi > 0) --nWifi;
-	else return false;
-
-	return true;
+Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
+	if (chkResource(item1) && other->chkResource(item2)) {
+		useResource(item2);
+		other->useResource(item1);
+		return Status::OK;
+	}
+	// Not enough resources
+	return Status::notOK;
 }
 
-void Builder::roll(Dice& dice)
+bool Builder::chkResource(resourceType typ, size_t ct = 1)
 {
-	auto v = dice.roll();
-	for (auto& prop : properties)
+	switch (typ)
 	{
-		prop->collect(v);
+	case resourceType::BRICK:
+		return nBrick >= ct;
+	case resourceType::ENERGY:
+		return nEnergy >= ct;
+	case resourceType::GLASS:
+		return nGlass >= ct;
+	case resourceType::HEAT:
+		return nHeat >= ct;
+	case resourceType::WIFI:
+		return nWifi >= ct;
 	}
 }
+
+bool Builder::useResource(resourceType typ, size_t ct = 1)
+{
+	switch (typ)
+	{
+	case resourceType::BRICK:
+		return nBrick >= ct;
+	case resourceType::ENERGY:
+		return nEnergy >= ct;
+	case resourceType::GLASS:
+		return nGlass >= ct;
+	case resourceType::HEAT:
+		return nHeat >= ct;
+	case resourceType::WIFI:
+		return nWifi >= ct;
+	}
+}
+
+Status Builder::improve(int address) {
+	Status s;
+	for (auto building : properties) {
+		if (building->ID == address)
+			return building->improve();
+	}
+	// You cannot build here
+	return Status::notOK;
+}
+
+

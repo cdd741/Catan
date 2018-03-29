@@ -58,6 +58,9 @@ void Layout::load(istream& in)
 
 }
 
+void Board::movingGeese(int tileidx) {
+	Geese = tiles[tileidx];
+}
 
 Status Board::buildRoad(Builder* player, int address) {
 	roads[address]->build(player);
@@ -68,7 +71,7 @@ Status Board::buildRes(Builder* player, int address) {
 }
 
 Status Board::improve(Builder* player, int address) {
-	buildings[address]->build(player);
+	player->improve(address);
 }
 
 Status Board::trade(Builder* player1, Builder* player2, resouseType item1, resouseType item2) {

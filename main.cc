@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "builder.hpp"
+#include "resourse.hpp"
 
 #include <iostream>
 #include <string>
@@ -20,8 +21,10 @@ int main(int argc, char* argv[]){
 	Builder* player = players[currTurn];
 	// game play
 	while (true) {
+		//set dice && roll
 		while (true) {
-			
+		
+
 		}
 
 		while (true) {
@@ -53,7 +56,8 @@ int main(int argc, char* argv[]){
 				Status s = board.improve(player, criteriaNum);
 			}
 			else if (cmd == "trade") {
-				string colour, give, take, responce;
+				string colour, responce;
+				resourceType give, take;
 				cin >> colour >> give >> take;
 				cout << "Does " << colour << "accept this offer?" << endl;
 				cin >> responce;
@@ -65,7 +69,7 @@ int main(int argc, char* argv[]){
 						else if (colour == "Orange") player2 = players[2];
 						else if (colour == "Yello") player2 = players[3];
 						/* self-assign check?*/
-						Status s = player->trade(give, take, player2);
+						Status s = player->trade(player2, give, take);
 						continue;
 					}
 					else if (responce == "no") continue;

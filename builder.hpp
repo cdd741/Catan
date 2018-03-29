@@ -6,10 +6,11 @@
 #include <iostream>
 #include "player.hpp"
 #include "resourse.hpp"
+#include "status.hpp"
 
 class Dice;
 class Building;
-
+class TerminalGrid;
 class Builder
 {
 public:
@@ -24,13 +25,17 @@ public:
 	bool winCheck();
 	bool useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
-	bool trade(resouseType item1, resouseType item2);
-	void roll(Dice& dice);	// note: the dice is only rolled once in this func call
-	friend std::ostream &operator<<(std::ostream &out, const Builder &b);
+	Status trade(Builder* other, resourceType item1, resourceType item2);
+	Status improve(int address);
+	friend std::ostream &operator>>(std::istream &in, const Builder &b);
+	bool chkResource(resourceType typ, size_t ct = 1);
+	bool useResource(resourceType typ, size_t ct = 1);
+
+	std::vector<Building*> properties;
 
 protected:
 	// the Builder knows exactly what property (s)he owns
-	std::vector<Building*> properties;
+	
 	Player colour;
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
 	size_t score = 0;

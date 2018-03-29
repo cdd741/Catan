@@ -115,6 +115,7 @@
     <ClCompile Include="address.cc" />
     <ClCompile Include="board.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="tile.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

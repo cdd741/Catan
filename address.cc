@@ -2,6 +2,31 @@
 
 #include "builder.hpp"
 
+#include <cassert>
+
+Status Road::build(Builder * owner) {
+	for (auto& b : neighbours) {
+		if (b->owned() || b->checkRoadNeighbour()) {
+			if(owner->useResources(0, 0, 0, 1, 1))
+				return Status::OK;
+			// Not Enough
+			else return Status::notOK;
+		}
+	}
+	// You cannot build here
+	return Status::notOK;
+}
+
+bool Building::checkRoadNeighbour() {
+	for (auto & p : neighbours)
+	{
+		if (p.second->built)
+			return true;
+	}
+	return false;
+}
+
+
 Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 {
 	// criteria checks
@@ -24,7 +49,7 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 	}
 	type = Basement;
 	owner = who;
-
+	who->properties.push_back(this);
 	return Status::OK;
 }
 
@@ -34,17 +59,32 @@ Status Building::improve()	// allowing deriving possibilities
 	{
 	case None:
 	case Tower:
-		return Status::notOK;
+		return Status::notOK; // You cannot build here
 
 	case Basement:	// upgrade to House
-		if (!owner->useResources()) return Status::notOK;
+		if (!owner->useResources()) return Status::notOK; // Resources Not Enough
 		type = House;
 		return Status::OK;
 	case House:	// upgrade to Tower
-		if (!owner->useResources()) return Status::notOK;
+		if (!owner->useResources()) return Status::notOK; // Resources Not Enough
 		type = Tower;
 		return Status::OK;
 	default:
-		throw NotImplementedException("the current houseType is not handled in Building.improve(), perhaps a new houseType is added while handlers are not updated to reflect that.");
+		throw;
 	}
+}
+
+
+void Building::connect(Building* other)
+{
+	if (!neighbours[other])
+	{
+		neighbours[other] = new Road();
+		other->neighbours[this] = neighbours[other];
+	}
+}
+
+bool Building::isConnected(const Building* other) const
+{
+	return neighbours.at(other);
 }

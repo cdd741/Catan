@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "exception.hpp"
 #include "tile.hpp"
@@ -12,12 +13,16 @@
 class Builder;
 class Tile;
 
-struct Road
-{
-	bool built = false;
+class Road{
+	
 	Builder* owner = nullptr;
-	Status build(Builder * who);
+	std::unordered_set<Building*> neighbours;
+public:
+	bool built = false;
+	bool owned() const { return owner; }
+	Status build(Builder * owner);
 };
+
 
 class Building
 {
@@ -27,39 +32,20 @@ public:
 		None, Basement, House, Tower
 	};
 
-	/* a dice roll has occured, collect resources to owner */
-	void collect(){
-		if (owner)
-			for (auto& pTile : 1 )
-				pTile->produce(diceRoll, owner);
-	}
-
+	bool checkRoadNeighbour();
 	Status build(Builder * who, bool bInitial = false);	// bSucceeded
+	Status improve();
+	
+	void connect(Building* other);
+	bool isConnected(const Building* other) const;
 
-	// a default param of houseType could extend the possibilities for upgrading in different paths (skipping stages)
-	// or if there are multiple non-intersecting paths, creating another status for such cases would be a good soln
-	// in the worst case, improve() gets derived in the subclasses for non-default paths/Buildings
-	virtual Status improve() throw(NotImplementedException);
 
-	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
+	friend TerminalGrid &operator<<(TerminalGrid &out, const Builder &b);
+	unsigned int ID = -1;
 
-	void connect(Building* other)
-	{
-		if (!neighbours[other])
-		{
-			neighbours[other] = new Road();
-			other->neighbours[this] = neighbours[other];
-		}
-	}
-
-	bool isConnected(const Building* other) const
-	{
-		return neighbours.at(other);
-	}
-
+	bool owned() const { return owner; }
 protected:
 	std::unordered_map<const Building*, Road*> neighbours;
-
 	Builder* owner = nullptr;
 	Type type = None;
 };
