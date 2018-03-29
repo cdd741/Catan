@@ -102,5 +102,6 @@ int main(int argc, char* argv[]){
 				cout << "Invalid command" << endl;
 			}
 	}
+
 	return 0;
 }

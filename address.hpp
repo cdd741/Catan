@@ -39,7 +39,6 @@ public:
 	void connect(Building* other);
 	bool isConnected(const Building* other) const;
 
-
 	friend TerminalGrid &operator<<(TerminalGrid &out, const Builder &b);
 	unsigned int ID = -1;
 

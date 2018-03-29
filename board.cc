@@ -1,6 +1,5 @@
 #include "board.hpp"
 
-
 #include "exception.hpp"
 #include "resources.hpp"
 #include <iostream>
@@ -17,7 +16,6 @@ void Layout::load(istream& in)
 	int type, roll;
 
 	int r_ct[]{ 1,2,3,4,5,6,7,8 };
-	unordered_set<int> s{3, 5, 7};
 
 	//  a graph is intepr. as a row-coln relationship
 	for (auto row_idx = 0; row_idx < 9; row_idx++)

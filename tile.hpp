@@ -23,6 +23,7 @@ details should be discussed sometime in the future
 class Building;
 class Road;
 
+enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
 
 struct info_cons
 {
@@ -40,7 +41,7 @@ struct info_cons
 };
 
 enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
-
+class TerminalGrid;
 class Tile
 {
 	TileType type;
@@ -69,6 +70,7 @@ public:
 	std::unordered_set<Building*> buildings;
 
 	info_cons info;
+  
 protected:
 	size_t nResources;
 	unsigned int roll;	// associated roll # for this Tile to produce resources
