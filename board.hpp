@@ -36,10 +36,12 @@ typedef std::unordered_map<Coordinate2D, Tile*, Coordinate2DHash> Graph;
 class Layout
 {
 public:
-	Layout() {}
-	Layout(std::istream& in) : Layout() { load(in); }
-
+	Layout(int nRows) : nRows{ nRows } { row_ct = new int[] { 1, 2, 3, 2, 3, 2, 3, 2, 1 }; }
+	Layout(std::istream& in, int nRows) : Layout(nRows) { load(in); }
+	virtual ~Layout() { delete row_ct; }
 public:
+	int* row_ct;
+	int nRows;
 	virtual void load(std::istream& in);	// -> graph
 
 	/*
@@ -133,21 +135,6 @@ public:
 		}
 	}
 
-	struct info_cons
-	{
-		Building *l = nullptr, *lu = nullptr, *lr = nullptr, *r = nullptr, *ru = nullptr, *rl = nullptr;
-		void merge(const info_cons& other)	// in place
-		{
-			// assertions needed, cant have conflict without one side being nullptr
-			l = l ? l : other.l;
-			lu = lu ? lu : other.lu;
-			lr = lr ? lr : other.lr;
-			r = r ? r : other.r;
-			ru = ru ? ru : other.ru;
-			rl = rl ? rl : other.rl;
-		}
-	};
-
 	std::vector<std::pair<Coordinate2D, info_cons>> do_construct(const Coordinate2D& coord, Building * l, Building * lu, Building * ru, Building * r)
 	{
 		// cannot have all zeros (becomes a free standing tile)
@@ -167,6 +154,8 @@ public:
 		r->connect(rl);
 		rl->connect(ll);
 		ll->connect(l);
+
+		layout->graph[coord]->info = info_cons{ l, lu, ll, r, ru, rl  };
 
 		buildings.insert(l);
 		buildings.insert(lu);
@@ -207,7 +196,43 @@ public:
 		return v;
 	}
 
+	void assignUIIndexes()
+	{
+		assert(layout);
 
+		// the graph is always set to start from (0, 0)
+
+		auto index = 0;
+
+		// scanner line method
+		// let's assign indexes as they are drawn in place
+		
+
+		// we start from the 0th line, (0, 0),
+		// the top most line is the 1st scanner line
+
+#define exists(x, y) (bool)(layout->graph[make_coord(x, y)])
+
+		for (auto x = 0; x < layout->nRows; x++)
+		{
+			for (auto i = 0; i < layout->row_ct[x]; i++)
+			{
+				if (!exists(x, i - 1) && exists(x - 2, i - 2))
+					addr_map[index++] = layout->graph[{x - 2, i - 1}]->info.ll;
+				if (!exists(x, i - 1) && exists(x - 1, i - 1))
+					addr_map[index++] = layout->graph[make_coord(x - 1, i - 1)]->info.l;
+				
+				addr_map[index++] = layout->graph[make_coord(x, i)]->info.lu;
+				addr_map[index++] = layout->graph[make_coord(x, i)]->info.ru;
+
+				if (!exists(x, i + 1) && exists(x - 1, i))
+					addr_map[index++] = layout->graph[make_coord(x - 1, i)]->info.r;
+				if (!exists(x, i + 1) && exists(x - 2, i))
+					addr_map[index++] = layout->graph[{x - 2, i}]->info.rl;
+			}
+		}
+	}
+	
 	Status buildRoad(Builder* player, int address);
 	Status buildRes(Builder* player, int address);
 	Status improve(Builder* player, int address);
@@ -225,6 +250,10 @@ protected:
 	std::unordered_set<Builder*> builders;
 	std::unordered_set<Tile*> tiles;
 	std::unordered_set<Road*> roads;
+
+
+protected:
+	std::unordered_map<unsigned int, Building*> addr_map;
 };
 
 

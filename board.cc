@@ -2,7 +2,7 @@
 
 
 #include "exception.hpp"
-
+#include "resources.hpp"
 #include <iostream>
 
 using namespace std;
@@ -16,7 +16,6 @@ void Layout::load(istream& in)
 {
 	int type, roll;
 
-	int row_ct[]{1, 2, 3, 2, 3, 2, 3, 2, 1};
 	int r_ct[]{ 1,2,3,4,5,6,7,8 };
 	unordered_set<int> s{3, 5, 7};
 

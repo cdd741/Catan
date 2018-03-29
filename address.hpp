@@ -12,14 +12,12 @@
 class Builder;
 class Tile;
 
-
 struct Road
 {
 	bool built = false;
 	Builder* owner = nullptr;
 	Status build(Builder * who);
 };
-
 
 class Building
 {
