@@ -9,6 +9,7 @@ int main(int argc, char* argv[])
 {
 	ifstream in("layout.txt");
 	Board board(new Layout(in, 9));
-
+	board.assignUIIndexes();
+	cout << board;
 	return 0;
 }

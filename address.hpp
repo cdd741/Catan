@@ -52,9 +52,16 @@ public:
 		}
 	}
 
-	bool isConnected(const Building* other) const
+	Road* isConnected(const Building* other) const
 	{
-		return neighbours.at(other);
+		try
+		{
+			return neighbours.at(other);
+		}
+		catch (std::out_of_range& e)
+		{
+			return nullptr;
+		}
 	}
 
 protected:

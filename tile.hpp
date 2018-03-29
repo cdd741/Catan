@@ -40,7 +40,7 @@ struct info_cons
 };
 
 enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
-
+class TerminalGrid;
 class Tile
 {
 	TileType type;
@@ -67,6 +67,7 @@ public:
 	std::unordered_set<Building*> buildings;
 
 	info_cons info;
+
 protected:
 	size_t nResources;
 

@@ -6,6 +6,8 @@
 #include <unordered_map>
 #include <queue>
 #include <cassert>
+#include <iostream>
+#include <map>
 
 #include "address.hpp"
 
@@ -55,6 +57,56 @@ public:
 	Graph graph;
 };
 
+class TerminalGrid
+{
+	std::map<size_t, const char*> grid;
+public:
+	std::unordered_map<void*, Coordinate2D> desired;
+
+	const size_t terminalWidth;
+
+	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile) { return out; }
+
+	TerminalGrid(size_t width) : terminalWidth{ width }
+	{
+
+	}
+
+	virtual ~TerminalGrid()
+	{
+		for (auto & p : grid)
+			delete p.second;
+	}
+
+	Coordinate2D location(void* object) const
+	{
+		if (desired.count(object))
+			return make_coord(-1, -1);	// no desired location proposed, unexpected
+		return desired.at(object);
+	}
+
+	const char* &operator[](const size_t& key)
+	{
+		if (grid[key] == nullptr)
+			return grid[key] = new const char[terminalWidth];
+	}
+
+	friend std::ostream& operator<<(std::ostream& out, const TerminalGrid& grid)
+	{
+		size_t line = 0;
+		for (auto & p : grid.grid)
+		{
+			for (; line < p.first; line++)
+				out << "\n";
+			if (p.second)
+				out << p.second;
+			out << "\n";
+			line++;
+		}
+		return out;
+	}
+};
+
 class Board
 {
 public:
@@ -80,6 +132,8 @@ public:
 		r->connect(ru);
 		r->connect(rl);
 		ll->connect(rl);
+
+		layout->graph[make_coord(0, 0)]->info = info_cons{ l, lu, ll, r, ru, rl };
 
 		buildings.insert(l);
 		buildings.insert(r);
@@ -190,7 +244,7 @@ public:
 		return v;
 	}
 
-	void assignUIIndexes()
+	void assignUIIndexes(std::ostream* pOut = nullptr)
 	{
 		assert(layout);
 
@@ -207,27 +261,101 @@ public:
 
 #define exists(x, y) (bool)(layout->graph[make_coord(x, y)])
 
-		for (auto x = 0; x < layout->nRows; x++)
+		int r_ct[]{ 1,2,3,4,5,6,7,8 };
+
+		std::vector<std::vector<Building*>> line_layout;
+		line_layout.resize(layout->nRows + 2);
+
+		for (auto row_idx = 0; row_idx < layout->nRows; row_idx++)
+		{
+			size_t max_ct = row_idx + 1;
+			size_t index_cp = index;
+			for (auto i = 0; i < layout->row_ct[row_idx]; i++)
+			{
+				auto base = (max_ct - layout->row_ct[row_idx]) / 2;
+
+				auto x = row_idx;
+				auto y = base + i;
+
+				if (!exists(x, y - 1) && exists(x - 2, y - 2))
+					addr_map[index++] = layout->graph[{x - 2, y - 2}]->info.ll;
+				if (!exists(x, y - 1) && exists(x - 1, y - 1))
+					addr_map[index++] = layout->graph[make_coord(x - 1, y - 1)]->info.l;
+				
+				addr_map[index++] = layout->graph[make_coord(x, y)]->info.lu;
+				addr_map[index++] = layout->graph[make_coord(x, y)]->info.ru;
+
+				if (!exists(x, y + 1) && exists(x - 1, y))
+					addr_map[index++] = layout->graph[make_coord(x - 1, y)]->info.r;
+				if (!exists(x, y + 1) && exists(x - 2, y))
+					addr_map[index++] = layout->graph[make_coord(x - 2, y)]->info.rl;
+			}
+
+			for (auto i = index_cp; i < index; i++)
+				line_layout[row_idx].push_back(addr_map[i]);
+		}
+
+		for (auto x = layout->nRows - 2; x < layout->nRows; x++)
 		{
 			for (auto i = 0; i < layout->row_ct[x]; i++)
 			{
-				if (!exists(x, i - 1) && exists(x - 2, i - 2))
-					addr_map[index++] = layout->graph[{x - 2, i - 1}]->info.ll;
-				if (!exists(x, i - 1) && exists(x - 1, i - 1))
-					addr_map[index++] = layout->graph[make_coord(x - 1, i - 1)]->info.l;
-				
-				addr_map[index++] = layout->graph[make_coord(x, i)]->info.lu;
-				addr_map[index++] = layout->graph[make_coord(x, i)]->info.ru;
-
-				if (!exists(x, i + 1) && exists(x - 1, i))
-					addr_map[index++] = layout->graph[make_coord(x - 1, i)]->info.r;
-				if (!exists(x, i + 1) && exists(x - 2, i))
-					addr_map[index++] = layout->graph[{x - 2, i}]->info.rl;
+				auto base = (x + 1 - layout->row_ct[x]) / 2;
+				auto y = base + i;
+				addr_map[index++] = layout->graph[make_coord(x, y)]->info.ll;
+				line_layout[x+2].push_back(addr_map[index - 1]);
+				addr_map[index++] = layout->graph[make_coord(x, y)]->info.rl;
+				line_layout[x+2].push_back(addr_map[index - 1]);
 			}
+		}
+
+		index = 0;
+		auto k = layout->graph[make_coord(6, 2)];
+		for (auto i = 0; i < line_layout.size() - 1; i++)
+		{
+			for (auto j = 0; j < line_layout[i].size()-1; j++)
+			{
+				if (line_layout[i][j]->isConnected(line_layout[i][j + 1]))
+					road_map[index++] = line_layout[i][j]->isConnected(line_layout[i][j + 1]);
+			}
+			
+			for (auto j = 0; j < line_layout[i].size(); j++)
+			{
+				for (auto k = 0; k < line_layout[i + 1].size(); k++)
+				{
+					if (line_layout[i][j]->isConnected(line_layout[i+1][k]))
+					{
+						road_map[index++] = line_layout[i][j]->isConnected(line_layout[i + 1][k]);
+
+						// in the given case, only connected once
+						break;
+					}
+				}
+			}
+		}
+
+
+		auto i = line_layout.size() - 1;
+		for (auto j = 0; j < line_layout[i].size() - 1; j++)
+		{
+			if (line_layout[i][j]->isConnected(line_layout[i][j + 1]))
+				road_map[index++] = line_layout[i][j]->isConnected(line_layout[i][j + 1]);
+		}
+		
+
+		if (pOut)
+		{
+			std::ostream & out = *pOut;
+
+			TerminalGrid terminal(80);
+			terminal.desired[layout->graph[make_coord(0, 0)]] = make_coord(0, 33);
+			terminal << *layout->graph[make_coord(0, 0)];
 		}
 	}
 	
-	friend std::ostream &operator<<(std::ostream &out, const Board &b);
+	friend std::ostream &operator<<(std::ostream &out, const Board &b)
+	{
+		return out;
+	}
 
 	virtual	~Board() {}
 
@@ -241,6 +369,7 @@ protected:
 
 protected:
 	std::unordered_map<unsigned int, Building*> addr_map;
+	std::unordered_map<unsigned int, Road*> road_map;
 };
 
 
