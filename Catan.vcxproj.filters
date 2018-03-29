@@ -24,9 +24,6 @@
     <ClInclude Include="dice.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="builder.cc">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="builder.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,10 +39,10 @@
     <ClInclude Include="status.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resourse.hpp">
+    <ClInclude Include="player.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="player.hpp">
+    <ClInclude Include="resource.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,6 +57,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="tile.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="resource.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="builder.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

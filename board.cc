@@ -61,27 +61,30 @@ void Board::movingGeese(int tileidx) {
 }
 
 Status Board::buildRoad(Builder* player, int address) {
-	roads[address]->build(player);
+	road_map[address]->build(player);
+	return Status::OK;
 }
 
 Status Board::buildRes(Builder* player, int address) {
-	buildings[address]->build(player);
+	addr_map[address]->build(player);
+	return Status::OK;
 }
 
 Status Board::improve(Builder* player, int address) {
 	player->improve(address);
+	return Status::OK;
 }
 
-Status Board::trade(Builder* player1, Builder* player2, resouseType item1, resouseType item2) {
-	player1->trade(item1, item2);
-	player2->trade(item2, item1);
-}
-
-// distribute resourses or goto geeseOcccur if dice is 7
-Status Board::diceRoll(int dice) {
-	if (dice == 7) this->geeseOccur();
-	else for (auto& tile : tiles) {
-		tile->produce(dice)
-	}
-}
+//Status Board::trade(Builder* player1, Builder* player2, resourceType item1, resourceType item2) {
+//	player1->trade(item1, item2);
+//	player2->trade(item2, item1);
+//}
+//
+//// distribute resourses or goto geeseOcccur if dice is 7
+//Status Board::diceRoll(int dice) {
+//	if (dice == 7) this->geeseOccur();
+//	else for (auto& tile : tiles) {
+//		tile->produce(dice)
+//	}
+//}
 

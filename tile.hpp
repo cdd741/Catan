@@ -23,8 +23,6 @@ details should be discussed sometime in the future
 class Building;
 class Road;
 
-enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
-
 struct info_cons
 {
 	Building *l = nullptr, *lu = nullptr, *ll = nullptr, *r = nullptr, *ru = nullptr, *rl = nullptr;
@@ -45,7 +43,6 @@ class TerminalGrid;
 class Tile
 {
 	TileType type;
-	std::unordered_set<Building*> Buildings; // save adjacent Buildings (from bz)
 	std::unordered_set<Road*> roads;		// save adjacent roads     (from bz)
 
 public:

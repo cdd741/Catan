@@ -1,9 +1,10 @@
-#ifndef RESOURSE_H
-#define RESOURSE_H
+#ifndef RESOURCE_H
+#define RESOURCE_H
 
 #include <string>
 #include <istream>
 #include <unordered_map>
+
 enum class resourceType { BRICK, ENERGY, GLASS, HEAT, WIFI };
 
 static const std::unordered_map<std::string, resourceType> mapping =
@@ -15,17 +16,6 @@ static const std::unordered_map<std::string, resourceType> mapping =
 	{ "WIFI", resourceType::WIFI },
 };
 
-std::istream &operator>>(std::istream &in, resourceType &b)
-{
-	std::string token;
-	in >> token;
+std::istream &operator>>(std::istream &in, resourceType &b);
 
-	if (mapping.count(token))
-		b = mapping.at(token);
-	else
-		throw;
-
-	return in;
-}
-
-#endif // !RESOURSE_H
+#endif // !RESOURCE_H

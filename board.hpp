@@ -14,7 +14,7 @@
 #include "builder.hpp"
 
 #include "status.hpp"
-#include "resourse.hpp"
+#include "resource.hpp"
 #include "player.hpp"
 
 class Builder;
@@ -368,7 +368,7 @@ public:
 	Status buildRoad(Builder* player, int address);
 	Status buildRes(Builder* player, int address);
 	Status improve(Builder* player, int address);
-	Status trade(Builder* player1, Builder* player2, resourceType item1, resouseType item2);
+	Status trade(Builder* player1, Builder* player2, resourceType item1, resourceType item2);
 	void playerStatus();
 	Status diceRoll(int dice);
 	void geeseOccur();
@@ -381,15 +381,16 @@ protected:
 	Layout* layout = nullptr;
 
 	Tile* Geese = nullptr;
-	std::unordered_map<unsigned int, Building*> buildings;
+	std::unordered_set<Building*> buildings;	// for releasing
+
+	std::unordered_map<unsigned int, Building*> addr_map;
+	std::unordered_map<unsigned int, Road*> road_map;
+
 	std::unordered_map<unsigned int, Builder*> builders;
 	std::unordered_map<unsigned int, Tile*> tiles;
 	std::unordered_map<unsigned int, Road*> roads;
 
 
-protected:
-	std::unordered_map<unsigned int, Building*> addr_map;
-	std::unordered_map<unsigned int, Road*> road_map;
 };
 
 

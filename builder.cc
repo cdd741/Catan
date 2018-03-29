@@ -8,7 +8,7 @@ bool Builder::winCheck() {
 	return score == 10;
 }
 
-bool Builder::useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0)
+bool Builder::useResources(size_t nBrick, size_t nEnergy, size_t nGlass, size_t nHeat, size_t nWifi)
 {
 	// returns true if the resources are deducted from the account (successful attempt to use the resources)
 	// false otherwise
@@ -31,7 +31,7 @@ bool Builder::useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass 
 	return false;
 }
 
-void Builder::addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0)
+void Builder::addResources(size_t nBrick, size_t nEnergy, size_t nGlass, size_t nHeat, size_t nWifi)
 {
 	this->nBrick += nBrick;
 	this->nEnergy += nEnergy;
@@ -50,7 +50,7 @@ Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
 	return Status::notOK;
 }
 
-bool Builder::chkResource(resourceType typ, size_t ct = 1)
+bool Builder::chkResource(resourceType typ, size_t ct)
 {
 	switch (typ)
 	{
@@ -67,7 +67,7 @@ bool Builder::chkResource(resourceType typ, size_t ct = 1)
 	}
 }
 
-bool Builder::useResource(resourceType typ, size_t ct = 1)
+bool Builder::useResource(resourceType typ, size_t ct)
 {
 	switch (typ)
 	{

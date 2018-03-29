@@ -1,6 +1,6 @@
 #include "board.hpp"
 #include "builder.hpp"
-#include "resourse.hpp"
+#include "resource.hpp"
 
 #include <iostream>
 #include <string>
@@ -9,10 +9,12 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) 
+{
 	string cmd;
 	int currTurn;
-	Board board;
+	ifstream layout_in("layout.txt");
+	Board board(new Layout(layout_in, 9));
 	vector<Builder*> players;
 	// Read command && construct/load Board
 	// Add Code Here
@@ -38,7 +40,7 @@ int main(int argc, char* argv[]){
 				}
 			}
 			else if (cmd == "residences") {
-				player->residences();
+				//player->residences();
 			}
 			else if (cmd == "build-road") {
 				int criteriaNum;
@@ -93,7 +95,7 @@ int main(int argc, char* argv[]){
 				// Add Code Here
 			}
 			else if (cmd == "next") {
-				if (currTurn == 3) pInd = 0;
+				if (currTurn == 3) /*pInd = 0;*/;
 				else ++currTurn;
 				break;
 				// next turn
@@ -102,6 +104,8 @@ int main(int argc, char* argv[]){
 				cout << "Invalid command" << endl;
 			}
 	}
-
+	}
+	
 	return 0;
+
 }

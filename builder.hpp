@@ -5,7 +5,7 @@
 #include <vector>
 #include <iostream>
 #include "player.hpp"
-#include "resourse.hpp"
+#include "resource.hpp"
 #include "status.hpp"
 
 class Dice;

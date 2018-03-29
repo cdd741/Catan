@@ -84,7 +84,7 @@ void Building::connect(Building* other)
 	}
 }
 
-bool Building::isConnected(const Building* other) const
+Road* Building::isConnected(const Building* other) const
 {
 	return neighbours.at(other);
 }
