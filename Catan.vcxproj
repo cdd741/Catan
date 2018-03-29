@@ -105,6 +105,9 @@
     <ClInclude Include="dice.hpp" />
     <ClInclude Include="builder.cc" />
     <ClInclude Include="exception.hpp" />
+    <ClInclude Include="player.hpp" />
+    <ClInclude Include="resourse.hpp" />
+    <ClInclude Include="status.hpp" />
     <ClInclude Include="resources.hpp" />
     <ClInclude Include="tile.hpp" />
   </ItemGroup>
@@ -112,6 +115,7 @@
     <ClCompile Include="address.cc" />
     <ClCompile Include="board.cc" />
     <ClCompile Include="main.cc" />
+    <ClCompile Include="tile.cc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,19 +4,25 @@
 
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "exception.hpp"
 #include "tile.hpp"
+#include "status.hpp"
 
 class Builder;
 class Tile;
 
-struct Road
-{
-	bool built = false;
+class Road{
+	
 	Builder* owner = nullptr;
-	bool build(Builder * who);
+	std::unordered_set<Building*> neighbours;
+public:
+	bool built = false;
+	bool owned() const { return owner; }
+	Status build(Builder * owner);
 };
+
 
 class Building
 {
@@ -26,47 +32,19 @@ public:
 		None, Basement, House, Tower
 	};
 
-	/* a dice roll has occured, collect resources to owner */
-	void collect(unsigned int diceRoll)
-	{
-		if (owner)
-			for (auto& pTile : tiles)
-				pTile->produce(diceRoll, owner);
-	}
+	bool checkRoadNeighbour();
+	Status build(Builder * who, bool bInitial = false);	// bSucceeded
+	Status improve();
+	
+	void connect(Building* other);
+	bool isConnected(const Building* other) const;
 
-	bool build(Builder * who, bool bInitial = false);	// bSucceeded
+	friend TerminalGrid &operator<<(TerminalGrid &out, const Builder &b);
+	unsigned int ID = -1;
 
-	// a default param of houseType could extend the possibilities for upgrading in different paths (skipping stages)
-	// or if there are multiple non-intersecting paths, creating another status for such cases would be a good soln
-	// in the worst case, improve() gets derived in the subclasses for non-default paths/Buildings
-	virtual bool improve() throw(NotImplementedException);
-
-	std::vector<Tile*> tiles;	// tiles this address is allowed to collect
-
-	void connect(Building* other)
-	{
-		if (!neighbours[other])
-		{
-			neighbours[other] = new Road();
-			other->neighbours[this] = neighbours[other];
-		}
-	}
-
-	Road* isConnected(const Building* other) const
-	{
-		try
-		{
-			return neighbours.at(other);
-		}
-		catch (std::out_of_range& e)
-		{
-			return nullptr;
-		}
-	}
-
+	bool owned() const { return owner; }
 protected:
 	std::unordered_map<const Building*, Road*> neighbours;
-
 	Builder* owner = nullptr;
 	Type type = None;
 };

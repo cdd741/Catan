@@ -39,6 +39,15 @@
     <ClInclude Include="resources.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="status.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resourse.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="address.cc">
@@ -48,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tile.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

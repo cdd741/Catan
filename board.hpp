@@ -2,6 +2,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <queue>
@@ -10,6 +11,11 @@
 #include <map>
 
 #include "address.hpp"
+#include "builder.hpp"
+
+#include "status.hpp"
+#include "resourse.hpp"
+#include "player.hpp"
 
 class Builder;
 class Tile;
@@ -244,6 +250,7 @@ public:
 		return v;
 	}
 
+
 	void assignUIIndexes(std::ostream* pOut = nullptr)
 	{
 		assert(layout);
@@ -356,15 +363,28 @@ public:
 	{
 		return out;
 	}
+	
+	void movingGeese(int tileidx);
+	Status buildRoad(Builder* player, int address);
+	Status buildRes(Builder* player, int address);
+	Status improve(Builder* player, int address);
+	Status trade(Builder* player1, Builder* player2, resourceType item1, resouseType item2);
+	void playerStatus();
+	Status diceRoll(int dice);
+	void geeseOccur();
+	friend std::ostream &operator<<(std::ostream &out, const Board &b);
+
 
 	virtual	~Board() {}
 
 protected:
 	Layout* layout = nullptr;
-	std::unordered_set<Building*> buildings;
-	std::unordered_set<Builder*> builders;
-	std::unordered_set<Tile*> tiles;
-	std::unordered_set<Road*> roads;
+
+	Tile* Geese = nullptr;
+	std::unordered_map<unsigned int, Building*> buildings;
+	std::unordered_map<unsigned int, Builder*> builders;
+	std::unordered_map<unsigned int, Tile*> tiles;
+	std::unordered_map<unsigned int, Road*> roads;
 
 
 protected:
