@@ -23,6 +23,22 @@ details should be discussed sometime in the future
 class Building;
 class Road;
 
+
+struct info_cons
+{
+	Building *l = nullptr, *lu = nullptr, *ll = nullptr, *r = nullptr, *ru = nullptr, *rl = nullptr;
+	void merge(const info_cons& other)	// in place
+	{
+		// assertions needed, cant have conflict without one side being nullptr
+		l = l ? l : other.l;
+		lu = lu ? lu : other.lu;
+		ll = ll ? ll : other.ll;
+		r = r ? r : other.r;
+		ru = ru ? ru : other.ru;
+		rl = rl ? rl : other.rl;
+	}
+};
+
 enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
 
 class Tile
@@ -38,7 +54,7 @@ public:
 	// you may convince me to keep/remove this block though
 	// (another approach is to let Building perform those actions instead of letting Tile's know details of Builder(s))
 	// (just some random thoughts), this works though
-	virtual void produce(unsigned int diceRoll, Builder* owner)
+	void produce(unsigned int diceRoll, Builder* owner)
 	{
 		if (!bProduction || diceRoll != roll) return;
 		produce_res(owner);
@@ -50,6 +66,7 @@ public:
 
 	std::unordered_set<Building*> buildings;
 
+	info_cons info;
 protected:
 	size_t nResources;
 
