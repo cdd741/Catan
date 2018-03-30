@@ -331,8 +331,9 @@ public:
 				{
 					if (line_layout[i][j]->isConnected(line_layout[i+1][k]))
 					{
+						line_layout[i][j]->isConnected(line_layout[i + 1][k])->ID = index;
 						road_map[index++] = line_layout[i][j]->isConnected(line_layout[i + 1][k]);
-
+						
 						// in the given case, only connected once
 						break;
 					}

@@ -18,6 +18,7 @@ class Road{
 	Builder* owner = nullptr;
 	std::unordered_set<Building*> neighbours;
 public:
+	unsigned int ID = -1;
 	bool built = false;
 	bool owned() const { return owner; }
 	Status build(Builder * owner);
