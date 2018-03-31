@@ -42,7 +42,7 @@ void Builder::addResources(size_t nBrick, size_t nEnergy, size_t nGlass, size_t 
 
 Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
 	if (chkResource(item1) && other->chkResource(item2)) {
-		useResource(item2);
+		useResource(item2); 
 		other->useResource(item1);
 		return Status::OK;
 	}

@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <iostream>
+#include <unordered_set>
 #include "player.hpp"
 #include "resource.hpp"
 #include "status.hpp"
@@ -31,12 +32,14 @@ public:
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
 
-	std::vector<Building*> properties;
+	std::unordered_set<Building*> properties;
+
+	Player colour;
 
 protected:
 	// the Builder knows exactly what property (s)he owns
 	
-	Player colour;
+
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
 	size_t score = 0;
 	

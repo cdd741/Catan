@@ -17,8 +17,8 @@ class Road{
 public:
 	unsigned int ID = -1;
 	Status build(Builder * owner);
-	friend TerminalGrid &operator<<(TerminalGrid &out, const Road &r);	
-	bool owned() const { return owner; }
+	friend std::ostream &operator<<(ostream &out, const Road &r);	
+	Builder* owned() const { return owner; }
 protected:
 	bool built = false;
 	Builder* owner = nullptr;
@@ -41,10 +41,10 @@ public:
 	void connect(Building* other);
 	Road* isConnected(const Building* other) const;
 
-	friend TerminalGrid &operator<<(TerminalGrid &out, const Builder &b);
+	friend std::ostream &operator<<(ostream &out, const Building &b);
 	unsigned int ID = -1;
-
-	bool owned() const { return owner; }
+	Type getType()const { return type; }
+	Builder* owned() const { return owner; }
 protected:
 	std::unordered_map<const Building*, Road*> neighbours;
 	Builder* owner = nullptr;

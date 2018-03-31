@@ -57,7 +57,9 @@ void Layout::load(istream& in)
 }
 
 void Board::movingGeese(int tileidx) {
+	Geese->changeProduction();
 	Geese = tiles[tileidx];
+	Geese->changeProduction();
 }
 
 Status Board::buildRoad(Builder* player, int address) {

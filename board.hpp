@@ -68,15 +68,9 @@ class TerminalGrid
 	std::map<size_t, char*> grid;
 public:
 	std::unordered_map<const void*, Coordinate2D> desired;
-
 	const size_t terminalWidth;
-
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile) { return out; }
-
-	TerminalGrid(size_t width) : terminalWidth{ width }
-	{
-
-	}
+	TerminalGrid(size_t width) : terminalWidth{ width }{}
 
 	virtual ~TerminalGrid()
 	{

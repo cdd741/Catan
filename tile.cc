@@ -8,3 +8,9 @@ void Tile::distribute(unsigned int diceRoll) {
 	for (auto building : buildings);
 		//building->collect();
 }
+
+void Tile::changeProduction() {
+	if (bProduction) bProduction = false;
+	else bProduction = true;
+	return;
+}

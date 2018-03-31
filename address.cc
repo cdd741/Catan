@@ -12,7 +12,7 @@ using namespace std;
 
 Status Road::build(Builder * owner) {
 	for (auto& b : neighbours) {
-		if (!built) break;
+		if (owned()) break;
 		else if (b->owned() || b->checkRoadNeighbour()) {
 			if(owner->useResources(0, 0, 0, 1, 1))
 				return Status::OK;
@@ -27,19 +27,16 @@ Status Road::build(Builder * owner) {
 bool Building::checkRoadNeighbour() {
 	for (auto & p : neighbours)
 	{
-		if (p.second->built)
+		if (p.second->owned())
 			return true;
 	}
 	return false;
 }
 
-TerminalGrid &operator<<(TerminalGrid& out, const Road &r)
+ostream &operator<<(ostream& out, const Road &r)
 {
-	out.setLocation(out.desired[(void*)&r]);
-	assert(out.desired[(void*)&r] == make_coord(-1, -1));
-
-	if (r.ID < 10) out << to_string(' ') << to_string(r.ID);
-	else out << to_string(r.ID);
+	if (r.ID < 10) out << ' ' << r.ID;
+	else out << r.ID;
 	return out;
 }
 
@@ -53,7 +50,7 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 		size_t nBuilt = 0;
 		for (auto& nb : neighbours)
 		{
-			if (nb.second && nb.second->built) nBuilt++;
+			if (nb.second && nb.second->owned()) nBuilt++;
 			if (nb.first->type != None) 
 				return Status::notOK;	// adjacent
 		}
@@ -63,10 +60,13 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 		if (!who->useResources(1, 1, 1, 0, 1)) 
 			return Status::notOK;
 	}
-	type = Basement;
-	owner = who;
-	who->properties.push_back(this);
-	return Status::OK;
+	else if(owned()) return Status::notOK; // You cannot build here
+	else {
+		type = Basement;
+		owner = who;
+		who->properties.insert(this);
+		return Status::OK;
+	}
 }
 
 Status Building::improve()	// allowing deriving possibilities
@@ -90,6 +90,44 @@ Status Building::improve()	// allowing deriving possibilities
 	}
 }
 
+ostream &operator<<(ostream& out, const Building &b)
+{
+	out << "|";
+	switch (b.owned()->colour) {
+	case Player::Blue:
+		out << 'B';
+		break;
+	case Player::Red:
+		out << 'R';
+		break;
+	case Player::Orange:
+		out << 'O';
+		break;
+	case Player::Yello:
+		out << 'Y';
+		break;
+	default:
+		if (b.ID < 10)
+			out << ' ' << b.ID;
+		else
+			out << b.ID;
+		return out << '|';
+	}
+	assert(b.getType() != Building::None);
+	switch (b.getType()) {
+	case Building::Basement:
+		out << 'B';
+		break;
+	case Building::House:
+		out << 'H';
+		break;
+	case Building::Tower:
+		out << 'T';
+		break;
+	}
+	return out << "|";
+}
+
 
 void Building::connect(Building* other)
 { 
@@ -104,3 +142,4 @@ Road* Building::isConnected(const Building* other) const
 {
 	return neighbours.at(other);
 }
+

@@ -64,6 +64,7 @@ public:
 	// a bit awk to have this flag in public
 	// although Tile is really just a very simple struct-like class
 	bool bProduction = true;
+	void changeProduction();
 	std::unordered_set<Building*> buildings;
 
 	info_cons info;
