@@ -65,7 +65,7 @@ public:
 
 class TerminalGrid
 {
-	std::map<size_t, const char*> grid;
+	std::map<size_t, char*> grid;
 public:
 	std::unordered_map<void*, Coordinate2D> desired;
 
@@ -91,10 +91,27 @@ public:
 		return desired.at(object);
 	}
 
-	const char* &operator[](const size_t& key)
+	char* &operator[](const size_t& key)
 	{
 		if (grid[key] == nullptr)
-			return grid[key] = new const char[terminalWidth];
+			return grid[key] = new char[terminalWidth];
+	}
+
+	Coordinate2D _location;
+	void setLocation(const Coordinate2D& loc)
+	{
+		_location = loc;
+	}
+
+	friend TerminalGrid& operator<<(TerminalGrid& out, const std::string& s)
+	{
+		assert(out._location != make_coord(-1, -1));
+		for (auto i = 0; i < s.size(); i++)
+		{
+			assert(out._location.second + i < out.terminalWidth);
+			out[out._location.first][out._location.second + i] = s[i];
+		}
+		return out;
 	}
 
 	friend std::ostream& operator<<(std::ostream& out, const TerminalGrid& grid)

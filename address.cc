@@ -4,6 +4,10 @@
 
 #include <cassert>
 
+#include "board.hpp"
+
+using namespace std;
+
 Status Road::build(Builder * owner) {
 	for (auto& b : neighbours) {
 		if (b->owned() || b->checkRoadNeighbour()) {
@@ -26,6 +30,15 @@ bool Building::checkRoadNeighbour() {
 	return false;
 }
 
+TerminalGrid &operator<<(TerminalGrid& out, const Road &r)
+{
+	out.setLocation(out.desired[(void*)&r]);
+	assert(out.desired[(void*)&r] == make_coord(-1, -1));
+
+	if (r.ID < 10) out << to_string(' ') << to_string(r.ID);
+	else out << to_string(r.ID);
+	return out;
+}
 
 Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 {

@@ -22,6 +22,7 @@ public:
 	bool built = false;
 	bool owned() const { return owner; }
 	Status build(Builder * owner);
+	friend TerminalGrid &operator<<(TerminalGrid& out, const Road &r);
 };
 
 
