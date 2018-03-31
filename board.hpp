@@ -9,6 +9,8 @@
 #include <cassert>
 #include <iostream>
 #include <map>
+#include <sstream>
+#include <string>
 
 #include "address.hpp"
 #include "builder.hpp"
@@ -71,7 +73,43 @@ public:
 
 	const size_t terminalWidth;
 
-	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile) { return out; }
+	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
+	{
+		auto desired = out.desired[(void*)&tile];
+		assert(desired == make_coord(-1, -1));
+		std::stringstream ss;
+		ss << "|" << *tile.info.lu << "|--" << tile.info.lu->isConnected(tile.info.ru) << "--|" << *tile.info.ru << "|";
+		out.setLocation(desired);
+		out << ss.str();
+
+		out.setLocation(make_coord(desired.first + 1, desired.second));
+		out << " /          \ ";
+
+		out.setLocation(make_coord(desired.first + 2, desired.second - 1));
+		out << tile.info.lu->isConnected(tile.info.l) << "           " << tile.info.ru->isConnected(tile.info.r);
+
+		out.setLocation(make_coord(desired.first + 3, desired.second - 1));
+		out << "/            \\";
+
+
+		// since this is a grid, overwritting at the same coordinate does not affect final output
+		// doing so prevents possibilities of missing a road/node in the relative directions
+		// TODO: add the next a few lines
+
+		if (tile.info.ll)
+		{
+			out.desired[tile.info.ll] = make_coord(desired.first + 4, desired.second - 12);
+			out << *tile.info.ll;
+		}
+
+		if (tile.info.rl)
+		{
+			out.desired[tile.info.rl] = make_coord(desired.first + 4, desired.second + 13);
+			out << *tile.info.rl;
+		}
+
+		return out;
+	}
 
 	TerminalGrid(size_t width) : terminalWidth{ width }
 	{
@@ -111,6 +149,7 @@ public:
 			assert(out._location.second + i < out.terminalWidth);
 			out[out._location.first][out._location.second + i] = s[i];
 		}
+		out._location.second += s.size();
 		return out;
 	}
 
