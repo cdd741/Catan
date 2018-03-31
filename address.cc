@@ -2,7 +2,9 @@
 
 #include "builder.hpp"
 
+#include <iostream>
 #include <cassert>
+#include "board.hpp"
 
 #include "board.hpp"
 
@@ -10,7 +12,8 @@ using namespace std;
 
 Status Road::build(Builder * owner) {
 	for (auto& b : neighbours) {
-		if (b->owned() || b->checkRoadNeighbour()) {
+		if (!built) break;
+		else if (b->owned() || b->checkRoadNeighbour()) {
 			if(owner->useResources(0, 0, 0, 1, 1))
 				return Status::OK;
 			// Not Enough
@@ -75,11 +78,11 @@ Status Building::improve()	// allowing deriving possibilities
 		return Status::notOK; // You cannot build here
 
 	case Basement:	// upgrade to House
-		if (!owner->useResources()) return Status::notOK; // Resources Not Enough
+		if (!owner->useResources(0, 0, 2, 3, 0)) return Status::notOK; // Resources Not Enough
 		type = House;
 		return Status::OK;
 	case House:	// upgrade to Tower
-		if (!owner->useResources()) return Status::notOK; // Resources Not Enough
+		if (!owner->useResources(3, 2, 2, 2, 1)) return Status::notOK; // Resources Not Enough
 		type = Tower;
 		return Status::OK;
 	default:
@@ -89,7 +92,7 @@ Status Building::improve()	// allowing deriving possibilities
 
 
 void Building::connect(Building* other)
-{
+{ 
 	if (!neighbours[other])
 	{
 		neighbours[other] = new Road();

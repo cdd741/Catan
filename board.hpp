@@ -67,7 +67,7 @@ class TerminalGrid
 {
 	std::map<size_t, char*> grid;
 public:
-	std::unordered_map<void*, Coordinate2D> desired;
+	std::unordered_map<const void*, Coordinate2D> desired;
 
 	const size_t terminalWidth;
 
