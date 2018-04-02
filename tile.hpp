@@ -54,13 +54,13 @@ public:
 	// you may convince me to keep/remove this block though
 	// (another approach is to let Building perform those actions instead of letting Tile's know details of Builder(s))
 	// (just some random thoughts), this works though
-	void produce(unsigned int diceRoll, Builder* owner)
+/*	void produce(unsigned int diceRoll, Builder* owner)
 	{
 		if (!bProduction || diceRoll != roll) return;
 		produce_res(owner);
-	}
+	}   */
 
-	void distribute(unsigned int diceRoll);
+	void distribute();
 
 
 	// a bit awk to have this flag in public

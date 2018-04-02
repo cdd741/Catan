@@ -106,8 +106,8 @@
     <ClInclude Include="exception.hpp" />
     <ClInclude Include="player.hpp" />
     <ClInclude Include="resource.hpp" />
-    <ClInclude Include="status.hpp" />
     <ClInclude Include="resources.hpp" />
+    <ClInclude Include="status.hpp" />
     <ClInclude Include="tile.hpp" />
   </ItemGroup>
   <ItemGroup>

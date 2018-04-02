@@ -33,9 +33,6 @@
     <ClInclude Include="board.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resources.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="status.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -43,6 +40,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resources.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

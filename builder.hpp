@@ -14,6 +14,7 @@ class TerminalGrid;
 class Builder
 {
 public:
+    size_t iBrick = 0, iEnergy = 0, iGlass = 0, iHeat = 0, iWifi = 0;
 	// default vals to zero for future extensions
 	// note: another possible soln is to use a vector/unordered_set to pass with {type, count}
 	// more flexible, but slower
@@ -23,6 +24,7 @@ public:
 	// e.g., using 1 wifi would have to use a call "useResources(0, 0, 0, 0, 1)" which is less intuitive
 
 	bool winCheck();
+	void playerStatus();
 	bool useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	Status trade(Builder* other, resourceType item1, resourceType item2);
@@ -30,6 +32,8 @@ public:
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
+	void half();
+
 	std::string loseRandom()
 	{	
 		int nProperties = nBrick + nEnergy + nGlass + nHeat + nWifi;
@@ -71,13 +75,16 @@ public:
 	std::unordered_set<Building*> properties;
 	Builder(Player::col colour) :colour{ colour } {}
 	Player::col colour;
+	size_t score = 0;
 
 protected:
 	// the Builder knows exactly what property (s)he owns
 	
 
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
-	size_t score = 0;
+	
+    
+    
 	
 };
 
