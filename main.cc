@@ -31,12 +31,13 @@ int main(int argc, char* argv[])
 
 	ifstream layout_in(fname);
 	Board board(new Layout(layout_in, 9));
-	
+	board.assignUIIndexes();
+
 	if (players.size() == 0) {
-		players[0] = new Builder{ Player::Blue };
-		players[1] = new Builder{ Player::Red };
-		players[2] = new Builder{ Player::Orange };
-		players[3] = new Builder{ Player::Yellow };
+		players.push_back(new Builder(Player::Blue));
+		players.push_back(new Builder(Player::Red));
+		players.push_back(new Builder(Player::Orange));
+		players.push_back(new Builder(Player::Yellow));
 	}
 	board.getPlayers(players);
     

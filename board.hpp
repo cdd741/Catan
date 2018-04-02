@@ -85,12 +85,19 @@ public:
 		return out << ss.str();
 	}
 
+	friend TerminalGrid &operator<<(TerminalGrid &out, const Building &r)
+	{
+		std::stringstream ss;
+		ss << r;
+		return out << ss.str();
+	}
+
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
 	{
 		auto desired = out.desired[(void*)&tile];
-		assert(desired == make_coord(-1, -1));
+		assert(desired != make_coord(-1, -1));
 		std::stringstream ss;
-		ss << *tile.info.lu << "--" << tile.info.lu->isConnected(tile.info.ru) << "--" << *tile.info.ru;
+		ss << *tile.info.lu << "--" << *(tile.info.lu->isConnected(tile.info.ru)) << "--" << *tile.info.ru;
 		out.setLocation(desired);
 		out << ss.str();
 
@@ -101,38 +108,36 @@ public:
 		out << *(tile.info.lu->isConnected(tile.info.l)) << "           " << *(tile.info.ru->isConnected(tile.info.r));
 
 		out.setLocation(make_coord(desired.first + 3, desired.second - 1));
-		out << "/            \\";
+		out << "/              \\";
 
-		out.setLocation(make_coord(desired.first + 4, desired.second - 2));
-		ss << *tile.info.l << "           " << *tile.info.r;
+		out.setLocation(make_coord(desired.first + 4, desired.second - 3));
+		out << *tile.info.l << "            " << *tile.info.r;
 
 		out.setLocation(make_coord(desired.first + 5, desired.second - 1));
-		out << "\\            /";
+		out << "\\              /";
 
 		out.setLocation(make_coord(desired.first + 6, desired.second - 1));
-		out << *(tile.info.ll->isConnected(tile.info.l)) << "           " << *(tile.info.rl->isConnected(tile.info.r));
+		out << *(tile.info.ll->isConnected(tile.info.l)) << "            " << *(tile.info.rl->isConnected(tile.info.r));
 
 		out.setLocation(make_coord(desired.first + 7, desired.second));
-		out << " \\          / ";
+		out << " \\           / ";
 
 		out.setLocation(make_coord(desired.first + 8, desired.second));
-		ss << *tile.info.ll << "--" << *(tile.info.ll->isConnected(tile.info.rl)) << "--" << *tile.info.rl;
+		out << *tile.info.ll << "--" << *(tile.info.ll->isConnected(tile.info.rl)) << "--" << *tile.info.rl;
 
 
 		// since this is a grid, overwritting at the same coordinate does not affect final output
 		// doing so prevents possibilities of missing a road/node in the relative directions
 		// TODO: add the next a few lines
-
-		if (tile.info.ll)
+		Tile *left, *right;
+		if (left = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second)])
 		{
-			auto left = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second)];
-			out.desired[left] = make_coord(desired.first + 4, desired.second - 12);
+			out.desired[left] = make_coord(desired.first + 4, desired.second - 13);
 			out << *left;
 		}
 
-		if (tile.info.rl)
+		if (right = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second + 1)])
 		{
-			auto right = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second + 1)];
 			out.desired[right] = make_coord(desired.first + 4, desired.second + 13);
 			out << *right;
 		}
@@ -155,7 +160,14 @@ public:
 	char* &operator[](const size_t& key)
 	{
 		if (grid[key] == nullptr)
-			return grid[key] = new char[terminalWidth];
+		{
+			grid[key] = new char[terminalWidth];
+			for (auto i = 0; i < terminalWidth; i++)
+				grid[key][i] = ' ';
+			
+		}
+		
+		return grid[key];
 	}
 
 	Coordinate2D _location;
@@ -365,17 +377,32 @@ public:
 				auto y = base + i;
 
 				if (!exists(x, y - 1) && exists(x - 2, y - 2))
+				{
+					layout->graph[{x - 2, y - 2}]->info.ll->ID = index;
 					addr_map[index++] = layout->graph[{x - 2, y - 2}]->info.ll;
+				}
+
 				if (!exists(x, y - 1) && exists(x - 1, y - 1))
+				{
+					layout->graph[{x - 1, y - 1}]->info.l->ID = index;
 					addr_map[index++] = layout->graph[make_coord(x - 1, y - 1)]->info.l;
+				}
 				
+				layout->graph[make_coord(x, y)]->info.lu->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.lu;
+				layout->graph[make_coord(x, y)]->info.ru->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.ru;
 
 				if (!exists(x, y + 1) && exists(x - 1, y))
+				{
+					layout->graph[make_coord(x - 1, y)]->info.r->ID = index;
 					addr_map[index++] = layout->graph[make_coord(x - 1, y)]->info.r;
+				}
 				if (!exists(x, y + 1) && exists(x - 2, y))
+				{
+					layout->graph[make_coord(x - 2, y)]->info.rl->ID = index;
 					addr_map[index++] = layout->graph[make_coord(x - 2, y)]->info.rl;
+				}
 			}
 
 			for (auto i = index_cp; i < index; i++)
@@ -388,8 +415,11 @@ public:
 			{
 				auto base = (x + 1 - layout->row_ct[x]) / 2;
 				auto y = base + i;
+				layout->graph[make_coord(x, y)]->info.ll->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.ll;
 				line_layout[x+2].push_back(addr_map[index - 1]);
+
+				layout->graph[make_coord(x, y)]->info.rl->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.rl;
 				line_layout[x+2].push_back(addr_map[index - 1]);
 			}
@@ -402,7 +432,10 @@ public:
 			for (auto j = 0; j < line_layout[i].size()-1; j++)
 			{
 				if (line_layout[i][j]->isConnected(line_layout[i][j + 1]))
+				{
+					line_layout[i][j]->isConnected(line_layout[i][j + 1])->ID = index;
 					road_map[index++] = line_layout[i][j]->isConnected(line_layout[i][j + 1]);
+				}
 			}
 			
 			for (auto j = 0; j < line_layout[i].size(); j++)
@@ -426,7 +459,10 @@ public:
 		for (auto j = 0; j < line_layout[i].size() - 1; j++)
 		{
 			if (line_layout[i][j]->isConnected(line_layout[i][j + 1]))
+			{
+				line_layout[i][j]->isConnected(line_layout[i][j + 1])->ID = index;
 				road_map[index++] = line_layout[i][j]->isConnected(line_layout[i][j + 1]);
+			}
 		}
 		
 
@@ -442,7 +478,10 @@ public:
 	
 	friend std::ostream &operator<<(std::ostream &out, const Board &b)
 	{
-		return out;
+		TerminalGrid terminal(80, b.layout);
+		terminal.desired[b.layout->graph[make_coord(0, 0)]] = make_coord(0, 33);
+		terminal << *b.layout->graph[make_coord(0, 0)];
+		return out << terminal;
 	}
 	
 	Status movingGeese(int tileidx);
@@ -457,7 +496,7 @@ public:
 	void getPlayers(std::vector<Builder*> players) {
 		for (auto b : players) builders.emplace_back(b);
 	}
-	friend std::ostream &operator<<(std::ostream &out, const Board &b);
+
 
 
 	virtual	~Board() {}

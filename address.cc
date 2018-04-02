@@ -94,7 +94,15 @@ Status Building::improve()	// allowing deriving possibilities
 
 ostream &operator<<(ostream& out, const Building &b)
 {
-	out << "|";
+	out << '|';
+	if (b.owned() == nullptr)
+	{
+		if (b.ID < 10)
+			out << ' ' << b.ID;
+		else
+			out << b.ID;
+		return out << '|';
+	}
 	switch (b.owned()->colour) {
 	case Player::Blue:
 		out << 'B';
@@ -127,7 +135,7 @@ ostream &operator<<(ostream& out, const Building &b)
 		out << 'T';
 		break;
 	}
-	return out << "|";
+	return out << '|';
 }
 
 
@@ -142,6 +150,13 @@ void Building::connect(Building* other)
 
 Road* Building::isConnected(const Building* other) const
 {
-	return neighbours.at(other);
+	try
+	{
+		return neighbours.at(other);
+	}
+	catch (std::out_of_range& e)
+	{
+		return nullptr;
+	}
 }
 
