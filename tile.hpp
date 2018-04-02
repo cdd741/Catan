@@ -60,7 +60,7 @@ public:
 		produce_res(owner);
 	}   */
 
-	void distribute(int * b, int * r, int * o, int * y);
+	void distribute();
 
 
 	// a bit awk to have this flag in public
@@ -71,10 +71,11 @@ public:
 
 	info_cons info;
 	Coordinate2D coord;
+    unsigned int roll;
 
 protected:
 	size_t nResources;
-	unsigned int roll;	// associated roll # for this Tile to produce resources
+		// associated roll # for this Tile to produce resources
 };
 
 #endif

@@ -471,7 +471,7 @@ protected:
 	std::unordered_map<unsigned int, Building*> addr_map;
 	std::unordered_map<unsigned int, Road*> road_map;
 
-	std::unordered_map<unsigned int, Builder*> builders;
+	vector<Builder*> builders;
 	std::unordered_map<unsigned int, Road*> roads;
 
 
