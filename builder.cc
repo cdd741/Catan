@@ -8,6 +8,15 @@ bool Builder::winCheck() {
 	return score == 10;
 }
 
+void Builder::playerStatus() {
+	cout << Player::to_string(colour) << " has " << score << "building porints,";
+	cout << nBrick << " brick, ";
+	cout << nEnergy << " energy, ";
+	cout << nGlass << " glass, ";
+	cout << nHeat << " heat, ";
+	cout << "and " << nWifi << " WiFi." << endl;
+}
+
 bool Builder::useResources(size_t nBrick, size_t nEnergy, size_t nGlass, size_t nHeat, size_t nWifi)
 {
 	// returns true if the resources are deducted from the account (successful attempt to use the resources)
@@ -98,8 +107,8 @@ bool Builder::useResource(resourceType typ, size_t ct)
 }
 
 void Builder::half() {
-	int quantity = nBrick + nEnergy + nGlass + nHeat + nWifi;
-	int lBrick, lEnergy, lGlass, lHeat, lWifi;
+	unsigned int quantity = nBrick + nEnergy + nGlass + nHeat + nWifi;
+	int lBrick = 0, lEnergy = 0, lGlass = 0, lHeat = 0, lWifi  = 0;
 	int times = quantity / 2;
 	if (quantity >= 10) {
 		for (int i = 0; i < times; ++i) {

@@ -76,6 +76,7 @@ public:
 protected:
 	size_t nResources;
 		// associated roll # for this Tile to produce resources
+	virtual void produce_res(Builder* to) = 0;
 };
 
 #endif

@@ -24,14 +24,7 @@ public:
 	// e.g., using 1 wifi would have to use a call "useResources(0, 0, 0, 0, 1)" which is less intuitive
 
 	bool winCheck();
-	void playerStatus() {
-		cout << Player::to_string(colour) << " has " << score << "building porints,";
-		cout << nBrick << " brick, ";
-		cout << nEnergy << " energy, ";
-		cout << nGlass << " glass, ";
-		cout << nHeat << " heat, ";
-		cout << "and " << nWifi << " WiFi." << endl;
-	}
+	void playerStatus();
 	bool useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	Status trade(Builder* other, resourceType item1, resourceType item2);
@@ -82,13 +75,14 @@ public:
 	std::unordered_set<Building*> properties;
 	Builder(Player::col colour) :colour{ colour } {}
 	Player::col colour;
+	size_t score = 0;
 
 protected:
 	// the Builder knows exactly what property (s)he owns
 	
 
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
-	size_t score = 0;
+	
     
     
 	

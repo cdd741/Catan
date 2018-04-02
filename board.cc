@@ -90,7 +90,7 @@ Status Board::improve(Builder* player, int address) {
 //}
 //
 //// distribute resourses or goto geeseOcccur if dice is 7
-Status Board::diceRoll(int dice) {
+void Board::diceRoll(int dice) {
 	bool anyoneGained = false;
 	for (auto & t : layout->tiles) {
 		if (t.second->roll == dice) {
@@ -130,6 +130,5 @@ Status Board::diceRoll(int dice) {
 	else {
 		cout << "No builders gained resources." << endl;
 	}
-
-
 }
+

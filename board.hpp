@@ -453,9 +453,9 @@ public:
 		for (auto b : builders)
 			b->playerStatus();
 	}
-	Status diceRoll(int dice);
-	void getPlayers(vector<Builder*> players) {
-		for (auto b : players) builders.emplace(b);
+	void diceRoll(int dice);
+	void getPlayers(std::vector<Builder*> players) {
+		for (auto b : players) builders.emplace_back(b);
 	}
 	friend std::ostream &operator<<(std::ostream &out, const Board &b);
 
@@ -476,7 +476,7 @@ protected:
 	std::unordered_map<unsigned int, Building*> addr_map;
 	std::unordered_map<unsigned int, Road*> road_map;
 
-	std::unordered_set<Builder*> builders;
+	std::vector<Builder*> builders;
 	std::unordered_map<unsigned int, Road*> roads;
 
 

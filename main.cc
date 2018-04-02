@@ -38,8 +38,7 @@ int main(int argc, char* argv[])
 		players[2] = new Builder{ Player::Orange };
 		players[3] = new Builder{ Player::Yellow };
 	}
-    
-    board->builders = players;
+	board.getPlayers(players);
     
 	// Add Code Here
 	string cmd;

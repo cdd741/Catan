@@ -47,10 +47,9 @@ public:
 	unsigned int ID = -1;
 	Type getType()const { return type; }
 	Builder* owned() const { return owner; }
+	Type type = None;
 protected:
 	std::unordered_map<const Building*, Road*> neighbours;
-	
-	Type type = None;
 };
 
 
