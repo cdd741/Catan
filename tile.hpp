@@ -48,7 +48,7 @@ class Tile
 	std::unordered_set<Road*> roads;		// save adjacent roads     (from bz)
 
 public:
-	Tile(unsigned int roll, size_t nResources = 1) : nResources{ nResources }, roll{ roll } {}
+	Tile(unsigned int roll, unsigned int index, size_t nResources = 1) : nResources{ nResources }, roll{ roll }, index{ index } {}
 
 	// this is not necessary though, or not perferred imo (i don't like it personally)
 	// you may convince me to keep/remove this block though
@@ -71,10 +71,11 @@ public:
 
 	info_cons info;
 	Coordinate2D coord;
+	unsigned int index = -1;
+	unsigned int roll;	// associated roll # for this Tile to produce resources
 
 protected:
 	size_t nResources;
-	unsigned int roll;	// associated roll # for this Tile to produce resources
 	virtual void produce_res(Builder* to) = 0;
 };
 

@@ -32,22 +32,22 @@ void Layout::load(istream& in)
 			switch (type)
 			{
 			case 0:
-				pTile = new BRICK(roll);
+				pTile = new BRICK(roll, index);
 				break;
 			case 1:
-				pTile = new ENERGY(roll);
+				pTile = new ENERGY(roll, index);
 				break;
 			case 2:
-				pTile = new GLASS(roll);
+				pTile = new GLASS(roll, index);
 				break;
 			case 3:
-				pTile = new HEAT(roll);
+				pTile = new HEAT(roll, index);
 				break;
 			case 4:
-				pTile = new WIFI(roll);
+				pTile = new WIFI(roll, index);
 				break;
 			case 5:
-				pTile = new PARK(roll);
+				pTile = new PARK(roll, index);
 				break;
 			default:
 				throw NotImplementedException("undefined layout format");
