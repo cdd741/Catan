@@ -30,7 +30,7 @@ protected:
 class Building
 {
 public:
-	Builder * owner = nullptr;
+    Builder* owner = nullptr;
 	enum Type
 	{
 		None, Basement, House, Tower
