@@ -1,6 +1,7 @@
 #include "board.hpp"
 #include "builder.hpp"
 #include "resource.hpp"
+#include "dice.hpp"
 
 #include <iostream>
 #include <string>
@@ -9,23 +10,135 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
-	string cmd;
-	int currTurn;
-	ifstream layout_in("layout.txt");
-	Board board(new Layout(layout_in, 9));
 	vector<Builder*> players;
-	// Read command && construct/load Board
+	string fname{ "layout.txt" };
+	
+	for (int i = 1; i < argc; ++i) {
+		if (argv[i] == "-seed") {
+			stringstream ss{ argv[++i] };
+			int n;
+			ss >> n;
+			Dice::seed(n);
+		}
+		else if (argv[i] == "-load") {}
+		else if (argv[i] == "-board") {
+			fname = argv[++i];
+		}
+		else if (argv[i] == "-random-board") {}
+	}
+
+	ifstream layout_in(fname);
+	Board board(new Layout(layout_in, 9));
+	
+	if (players.size() == 0) {
+		players[0] = new Builder{ Player::Blue };
+		players[1] = new Builder{ Player::Red };
+		players[2] = new Builder{ Player::Orange };
+		players[3] = new Builder{ Player::Yellow };
+	}
+
 	// Add Code Here
-	int dice;
-	if (currTurn == 4) currTurn -= 4;
-	Builder* player = players[currTurn];
+	string cmd;
+	int currTurn = 0;
+	
 	// game play
 	while (true) {
+		if (currTurn == 4) currTurn -= 4;
+		Builder* player = players[currTurn];
 		//set dice && roll
 		while (true) {
-		
+			cin >> cmd;
+			bool bLoaded = false;
+			if (cmd == "load")
+			{
+				bLoaded = true;
+				//d = new LoadedDice(2);
+			}
+			else if (cmd == "fair")
+			{
+				//set to fairdice
+				bLoaded = false;
+			}
+			else if (cmd == "roll")
+			{
+				int roll;
+				//check dicetype && roll.
+				if (bLoaded) {
+					cout << "Input a roll between 2 and 12:" << endl;
+					
+					while (true) {
+						cin >> roll;
+						if (roll <= 12 && roll >= 2) break;
+						cout << "Invalid roll." << endl;
+					}
+					// set fair dice
+				}
+				else
+				{
+					FairDice fd;
+					roll = fd.roll();
+				}
+
+				if (roll == 7)
+				{
+					// in/out geese loc
+					board.geeseOccur();
+					int place;
+					do
+					{
+						cout << "Choose where to place the GEESE." << endl;
+						cin >> place;
+					} 
+					while (board.movingGeese(place) != Status::OK);
+					bool hasNeighbours = false;
+					unordered_set<Builder*> nei;
+					for (auto& b : board.neighbours(place))
+					{
+						if (b->owned() && b->owned() != player)
+						{
+							hasNeighbours = true;
+							nei.insert(b->owned());
+						}
+					}
+					if (hasNeighbours)
+					{
+						cout << "Builder " << Player::to_string(player->colour) << " can shoose to steal from ";
+						stringstream ss;
+						for (auto & n : nei)
+						{
+							ss << Player::to_string(n->colour) << ',';
+						}
+						cout << ss.str().substr(0, ss.str().length() - 1) << '.';
+						cout << "Choose a builder to steal from." << endl;
+						string tok;
+						cin >> tok;
+						bool bHandled = false;
+						while (!bHandled)
+						{
+							for (auto& n : nei)
+							{
+								if (Player::to_string(n->colour) == tok)
+								{
+									bHandled = true;
+									cout << "Builder " << Player::to_string(player->colour) << " steals " << n->loseRandom() << " from builder " << Player::to_string(n->colour);
+
+								}
+							}
+							cout << "Invalid." << endl;
+						}
+
+					}
+					else
+						cout << "Builder " << Player::to_string(player->colour) << " has no builders to steal from." << endl;
+				
+				}
+				else
+					board.diceRoll(roll);
+				break;
+			}
+			else cout << "Invalid input." << endl;
 
 		}
 
@@ -36,26 +149,34 @@ int main(int argc, char* argv[])
 			}
 			else if (cmd == "status") {
 				for (int i = 0; i <= 3; ++i) {
-					cout << &players[i];
+					cout << &players[i]; //no overloaded operand
 				}
 			}
 			else if (cmd == "residences") {
-				//player->residences();
+				for (auto &prop : players[currTurn]->properties) {
+					cout << prop->ID << " ";
+				}
 			}
 			else if (cmd == "build-road") {
 				int criteriaNum;
 				cin >> criteriaNum;
 				Status s = board.buildRoad(player, criteriaNum);
+				//output depends on s: cant build/ no enough resources
+				if (s == Status::notOK) cout << "can't build here" << endl;
 			}
 			else if (cmd == "build-res") {
 				int criteriaNum;
 				cin >> criteriaNum;
 				Status s = board.buildRes(player, criteriaNum);
+				//output depends on s: cant build/ no enough resources
+				if (s == Status::notOK) cout << "can't build here" << endl;
 			}
 			else if (cmd == "improve") {
 				int criteriaNum;
 				cin >> criteriaNum;
 				Status s = board.improve(player, criteriaNum);
+				//output depends on s: no enough resources
+				if (s == Status::notOK) cout << "no enough resources" << endl;
 			}
 			else if (cmd == "trade") {
 				string colour, responce;
@@ -95,17 +216,16 @@ int main(int argc, char* argv[])
 				// Add Code Here
 			}
 			else if (cmd == "next") {
-				if (currTurn == 3) /*pInd = 0;*/;
-				else ++currTurn;
+				++currTurn;
 				break;
 				// next turn
 			}
 			else {
 				cout << "Invalid command" << endl;
 			}
+		}
 	}
-	}
-	
+
 	return 0;
 
 }

@@ -2,6 +2,7 @@
 #ifndef ADDRESS_H
 #define ADDRESS_H
 
+#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -17,7 +18,7 @@ class Road{
 public:
 	unsigned int ID = -1;
 	Status build(Builder * owner);
-	friend std::ostream &operator<<(ostream &out, const Road &r);	
+	friend std::ostream &operator<<(std::ostream &out, const Road &r);	
 	Builder* owned() const { return owner; }
 protected:
 	bool built = false;
@@ -41,7 +42,7 @@ public:
 	void connect(Building* other);
 	Road* isConnected(const Building* other) const;
 
-	friend std::ostream &operator<<(ostream &out, const Building &b);
+	friend std::ostream &operator<<(std::ostream &out, const Building &b);
 	unsigned int ID = -1;
 	Type getType()const { return type; }
 	Builder* owned() const { return owner; }

@@ -65,6 +65,7 @@ bool Builder::chkResource(resourceType typ, size_t ct)
 	case resourceType::WIFI:
 		return nWifi >= ct;
 	}
+	throw;
 }
 
 bool Builder::useResource(resourceType typ, size_t ct)
@@ -82,6 +83,7 @@ bool Builder::useResource(resourceType typ, size_t ct)
 	case resourceType::WIFI:
 		return nWifi >= ct;
 	}
+	throw;
 }
 
 Status Builder::improve(int address) {

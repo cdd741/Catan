@@ -8,8 +8,7 @@
 #include "player.hpp"
 #include "resource.hpp"
 #include "status.hpp"
-
-class Dice;
+#include "dice.hpp"
 class Building;
 class TerminalGrid;
 class Builder
@@ -31,10 +30,47 @@ public:
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
+	std::string loseRandom()
+	{	
+		int nProperties = nBrick + nEnergy + nGlass + nHeat + nWifi;
+		if (!nProperties) return "-1";	// TODO, throw not enough to lose
+		CustomDice d(0, nProperties-1);
+		std::vector<size_t> v{ nBrick, nEnergy, nGlass, nHeat, nWifi };
+		auto r = d.roll();
+		auto i = 0;
+		while (r)
+		{
+			if (r > v[i])
+				r -= v[i];
+			else
+				break;
+
+		}
+		switch (i)
+		{
+		case 0:
+			useResource(resourceType::BRICK);
+			return "BRICK";
+		case 1:
+			useResource(resourceType::ENERGY);
+			return "ENERGY";
+		case 2:
+			useResource(resourceType::GLASS);
+			return "GLASS";
+		case 3:
+			useResource(resourceType::HEAT);
+			return "HEAT";
+		case 4:
+			useResource(resourceType::WIFI);
+			return "WIFI";
+		default:
+			throw;
+		}
+	}
 
 	std::unordered_set<Building*> properties;
-
-	Player colour;
+	Builder(Player::col colour) :colour{ colour } {}
+	Player::col colour;
 
 protected:
 	// the Builder knows exactly what property (s)he owns

@@ -17,6 +17,8 @@ void Layout::load(istream& in)
 
 	int r_ct[]{ 1,2,3,4,5,6,7,8 };
 
+
+	int index = 0;
 	//  a graph is intepr. as a row-coln relationship
 	for (auto row_idx = 0; row_idx < 9; row_idx++)
 	{
@@ -51,15 +53,20 @@ void Layout::load(istream& in)
 				throw NotImplementedException("undefined layout format");
 			}
 			graph[make_pair(row_idx, base + i)] = pTile;
+			tiles[index] = pTile;
 		}
 	}
 
 }
 
-void Board::movingGeese(int tileidx) {
+Status Board::movingGeese(int tileidx) {
+	if (!layout->tiles[tileidx]) return Status::notOK;
+	if (Geese == layout->tiles[tileidx])
+		return Status::notOK;
 	Geese->changeProduction();
-	Geese = tiles[tileidx];
+	Geese = layout->tiles[tileidx];
 	Geese->changeProduction();
+	return Status::OK;
 }
 
 Status Board::buildRoad(Builder* player, int address) {

@@ -59,6 +59,7 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 									// reject if not enough resources
 		if (!who->useResources(1, 1, 1, 0, 1)) 
 			return Status::notOK;
+		return Status::OK;
 	}
 	else if(owned()) return Status::notOK; // You cannot build here
 	else {
@@ -103,7 +104,7 @@ ostream &operator<<(ostream& out, const Building &b)
 	case Player::Orange:
 		out << 'O';
 		break;
-	case Player::Yello:
+	case Player::Yellow:
 		out << 'Y';
 		break;
 	default:

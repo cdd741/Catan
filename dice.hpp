@@ -8,7 +8,7 @@ class Dice
 {
 public:
 	virtual unsigned int roll() const = 0;
-	void seed(unsigned int sd)
+	static void seed(unsigned int sd)
 	{
 		eng.seed(sd);
 	}
@@ -55,4 +55,14 @@ public:
 	}
 };
 
+class CustomDice : public Dice
+{
+	unsigned int lower, upper;
+public:
+	CustomDice(unsigned int lower, unsigned int upper) :lower{ lower }, upper{ upper } {}
+	unsigned int roll() const override
+	{
+		return ranged_rand(lower, upper);
+	}
+};
 #endif
