@@ -90,10 +90,11 @@ Status Board::improve(Builder* player, int address) {
 //}
 //
 //// distribute resourses or goto geeseOcccur if dice is 7
-//Status Board::diceRoll(int dice) {
-//	if (dice == 7) this->geeseOccur();
-//	else for (auto& tile : tiles) {
-//		tile->produce(dice)
-//	}
-//}
+Status Board::diceRoll(int dice) {
+    for (auto & t : layout->tiles) {
+        if (t->roll == dice) {
+            t->distribute();
+        }
+    }
+}
 

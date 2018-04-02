@@ -14,6 +14,7 @@ class TerminalGrid;
 class Builder
 {
 public:
+    size_t iBrick = 0, iEnergy = 0, iGlass = 0, iHeat = 0, iWifi = 0;
 	// default vals to zero for future extensions
 	// note: another possible soln is to use a vector/unordered_set to pass with {type, count}
 	// more flexible, but slower
@@ -78,6 +79,8 @@ protected:
 
 	size_t nBrick = 0, nEnergy = 0, nGlass = 0, nHeat = 0, nWifi = 0;
 	size_t score = 0;
+    
+    
 	
 };
 
