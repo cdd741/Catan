@@ -74,7 +74,7 @@ public:
 	std::unordered_map<const void*, Coordinate2D> desired;
 	const size_t terminalWidth;
 
-	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile) { return out; }
+	TerminalGrid(size_t width) : terminalWidth{ width } {}
 
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
 	{
