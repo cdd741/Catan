@@ -9,33 +9,33 @@ using namespace std;
 void Tile::distribute() {
     for (auto & b : buildings) {
         if (type == TileType::Brick) {
-            b->owner->addResources(nResources,0,0,0,0);
-            b->owner->iBrick += nResources;
+            (b->owned())->addResources(nResources,0,0,0,0);
+            (b->owned())->iBrick += nResources;
         }
         if (type == TileType::Energy) {
-            b->owner->addResources(0,nResources,0,0,0);
-            b->owner->iEnergy += nResources;
+            (b->owned())->addResources(0,nResources,0,0,0);
+            (b->owned())->iEnergy += nResources;
         }
         if (type == TileType::Glass) {
-            b->owner->addResources(0,0,nResources,0,0);
-            b->owner->iGlass += Resources;
+            (b->owned())->addResources(0,0,nResources,0,0);
+            (b->owned())->iGlass += Resources;
         }
         if (type == TileType::Heat) {
-            b->owner->addResources(0,0,0,nResources,0);
-            b->owner->iHeat += nResources;
+            (b->owned())->addResources(0,0,0,nResources,0);
+            (b->owned())->iHeat += nResources;
         }
         if (type == TileType::Wifi) {
-            b->owner->addResources(0,0,0,0,nResources);
-            b->owner->iWifi += nResources;
+            (b->owned())->addResources(0,0,0,0,nResources);
+            (b->owned())->iWifi += nResources;
         }
         if (b->type == Type::Basement){
-            b->owner->score += 1;
+            (b->owned())->score += 1;
         }
         if (b->type == Type::House) {
-            b->owner->score += 2;
+            (b->owned())->score += 2;
         }
         if (b->type == Type::Tower) {
-            b->owner->score += 3;
+            (b->owned())->score += 3;
         }
     }
 }

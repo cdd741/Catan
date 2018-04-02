@@ -450,7 +450,7 @@ public:
 	Status buildRes(Builder* player, int address);
 	Status improve(Builder* player, int address);
 	void playerStatus();
-	Status diceRoll(int dice);
+	void diceRoll(int dice);
 	void geeseOccur();
 	friend std::ostream &operator<<(std::ostream &out, const Board &b);
 

@@ -38,7 +38,9 @@ int main(int argc, char* argv[])
 		players[2] = new Builder{ Player::Orange };
 		players[3] = new Builder{ Player::Yellow };
 	}
-
+    
+    board->builders = players;
+    
 	// Add Code Here
 	string cmd;
 	int currTurn = 0;

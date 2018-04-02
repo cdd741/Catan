@@ -30,7 +30,7 @@ protected:
 class Building
 {
 public:
-    Builder* owner = nullptr;
+    
 	enum Type
 	{
 		None, Basement, House, Tower
@@ -49,7 +49,7 @@ public:
 	Builder* owned() const { return owner; }
 protected:
 	std::unordered_map<const Building*, Road*> neighbours;
-	
+	Builder* owner = nullptr;
 	Type type = None;
 };
 
