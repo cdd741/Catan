@@ -70,11 +70,20 @@ public:
 class TerminalGrid
 {
 	std::map<size_t, char*> grid;
+	
 public:
 	std::unordered_map<const void*, Coordinate2D> desired;
 	const size_t terminalWidth;
+	Layout * layout;
 
-	TerminalGrid(size_t width) : terminalWidth{ width } {}
+	TerminalGrid(size_t width, Layout *layout = nullptr) : terminalWidth{ width }, layout{ layout } {}
+
+	friend TerminalGrid &operator<<(TerminalGrid &out, const Road &r)
+	{
+		std::stringstream ss;
+		ss << r;
+		return out << ss.str();
+	}
 
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
 	{
@@ -89,7 +98,7 @@ public:
 		out << " /          \\ ";
 
 		out.setLocation(make_coord(desired.first + 2, desired.second - 1));
-		out << tile.info.lu->isConnected(tile.info.l) << "           " << tile.info.ru->isConnected(tile.info.r);
+		out << *(tile.info.lu->isConnected(tile.info.l)) << "           " << *(tile.info.ru->isConnected(tile.info.r));
 
 		out.setLocation(make_coord(desired.first + 3, desired.second - 1));
 		out << "/            \\";
@@ -101,13 +110,13 @@ public:
 		out << "\\            /";
 
 		out.setLocation(make_coord(desired.first + 6, desired.second - 1));
-		out << tile.info.ll->isConnected(tile.info.l) << "           " << tile.info.rl->isConnected(tile.info.r);
+		out << *(tile.info.ll->isConnected(tile.info.l)) << "           " << *(tile.info.rl->isConnected(tile.info.r));
 
 		out.setLocation(make_coord(desired.first + 7, desired.second));
 		out << " \\          / ";
 
 		out.setLocation(make_coord(desired.first + 8, desired.second));
-		ss << *tile.info.ll << "--" << tile.info.ll->isConnected(tile.info.rl) << "--" << *tile.info.rl;
+		ss << *tile.info.ll << "--" << *(tile.info.ll->isConnected(tile.info.rl)) << "--" << *tile.info.rl;
 
 
 		// since this is a grid, overwritting at the same coordinate does not affect final output
@@ -116,14 +125,16 @@ public:
 
 		if (tile.info.ll)
 		{
-			out.desired[tile.info.ll] = make_coord(desired.first + 4, desired.second - 12);
-			out << *tile.info.ll;
+			auto left = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second)];
+			out.desired[left] = make_coord(desired.first + 4, desired.second - 12);
+			out << *left;
 		}
 
 		if (tile.info.rl)
 		{
-			out.desired[tile.info.rl] = make_coord(desired.first + 4, desired.second + 13);
-			out << *tile.info.rl;
+			auto right = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second + 1)];
+			out.desired[right] = make_coord(desired.first + 4, desired.second + 13);
+			out << *right;
 		}
 		return out;
 	}
@@ -286,6 +297,7 @@ public:
 		buildings.insert(rl);
 		buildings.insert(ll);
 
+		layout->graph[coord]->coord = coord;
 		layout->graph[coord]->buildings.insert(l);
 		layout->graph[coord]->buildings.insert(r);
 		layout->graph[coord]->buildings.insert(lu);
@@ -422,7 +434,7 @@ public:
 		{
 			std::ostream & out = *pOut;
 
-			TerminalGrid terminal(80);
+			TerminalGrid terminal(80, layout);
 			terminal.desired[layout->graph[make_coord(0, 0)]] = make_coord(0, 33);
 			terminal << *layout->graph[make_coord(0, 0)];
 		}

@@ -37,6 +37,8 @@ struct info_cons
 		rl = rl ? rl : other.rl;
 	}
 };
+typedef std::pair<int, int> Coordinate2D;
+
 
 enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
 class TerminalGrid;
@@ -68,7 +70,8 @@ public:
 	std::unordered_set<Building*> buildings;
 
 	info_cons info;
-  
+	Coordinate2D coord;
+
 protected:
 	size_t nResources;
 	unsigned int roll;	// associated roll # for this Tile to produce resources
