@@ -59,15 +59,16 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 									// reject if not enough resources
 		if (!who->useResources(1, 1, 1, 0, 1)) 
 			return Status::notOK;
-		return Status::OK;
 	}
 	else if(owned()) return Status::notOK; // You cannot build here
 	else {
 		type = Basement;
 		owner = who;
 		who->properties.insert(this);
-		return Status::OK;
 	}
+	cout << Player::to_string(who->colour) << " has buildt:" << endl;
+	cout << ID << " Basement" << endl;
+	return Status::OK;
 }
 
 Status Building::improve()	// allowing deriving possibilities

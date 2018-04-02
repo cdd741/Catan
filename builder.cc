@@ -50,6 +50,17 @@ Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
 	return Status::notOK;
 }
 
+Status Builder::improve(int address) {
+	Status s;
+	for (auto building : properties) {
+		if (building->ID == address)
+			return building->improve();
+	}
+	// You cannot build here
+	return Status::notOK;
+}
+
+
 bool Builder::chkResource(resourceType typ, size_t ct)
 {
 	switch (typ)
@@ -86,14 +97,45 @@ bool Builder::useResource(resourceType typ, size_t ct)
 	throw;
 }
 
-Status Builder::improve(int address) {
-	Status s;
-	for (auto building : properties) {
-		if (building->ID == address)
-			return building->improve();
+void Builder::half() {
+	int quantity = nBrick + nEnergy + nGlass + nHeat + nWifi;
+	int lBrick, lEnergy, lGlass, lHeat, lWifi;
+	int times = quantity / 2;
+	if (quantity >= 10) {
+		for (int i = 0; i < times; ++i) {
+			CustomDice cDice{ 1, quantity };
+			unsigned int roll = cDice.roll();
+			if ((roll -= nBrick) <= 0) {
+				--nBrick;
+				++lBrick;
+			}
+			else if ((roll -= nEnergy) <= 0) {
+				--nEnergy;
+				++lEnergy;
+			}
+			else if ((roll -= nGlass) <= 0) {
+				--nGlass;
+				++lGlass;
+			}
+			else if ((roll -= nHeat) <= 0) {
+				--nHeat;
+				++lHeat;
+			}
+			else {
+				--nWifi;
+				++lWifi;
+			}
+			--quantity;
+		}
+		cout << "Builder " << Player::to_string(colour) << "loses " << times << " resouces to the geese. ";
+		cout << "They lose:" << endl;
+		if (lBrick != 0) cout << lBrick << "BRICK" << endl;
+		if (lEnergy != 0) cout << lEnergy << "ENERGY" << endl;
+		if (lGlass != 0) cout << lGlass << "GLASS" << endl;
+		if (lHeat != 0) cout << lHeat << "HEAT" << endl;
+		if (lWifi != 0) cout << lWifi << "WIFI" << endl;
 	}
-	// You cannot build here
-	return Status::notOK;
 }
+
 
 

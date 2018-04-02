@@ -83,8 +83,8 @@ int main(int argc, char* argv[])
 
 				if (roll == 7)
 				{
-					// in/out geese loc
-					board.geeseOccur();
+					// helf player resources
+					for(auto p: players) p->half();
 					int place;
 					do
 					{
@@ -122,7 +122,9 @@ int main(int argc, char* argv[])
 								if (Player::to_string(n->colour) == tok)
 								{
 									bHandled = true;
-									cout << "Builder " << Player::to_string(player->colour) << " steals " << n->loseRandom() << " from builder " << Player::to_string(n->colour);
+									cout << "Builder " << Player::to_string(player->colour) 
+										<< " steals " << n->loseRandom()
+										<< " from builder " << Player::to_string(n->colour);
 
 								}
 							}
@@ -131,7 +133,8 @@ int main(int argc, char* argv[])
 
 					}
 					else
-						cout << "Builder " << Player::to_string(player->colour) << " has no builders to steal from." << endl;
+						cout << "Builder " << Player::to_string(player->colour) 
+						<< " has no builders to steal from." << endl;
 				
 				}
 				else
@@ -148,9 +151,7 @@ int main(int argc, char* argv[])
 				cout << board;
 			}
 			else if (cmd == "status") {
-				for (int i = 0; i <= 3; ++i) {
-					cout << &players[i]; //no overloaded operand
-				}
+				board.playerStatus();
 			}
 			else if (cmd == "residences") {
 				for (auto &prop : players[currTurn]->properties) {
@@ -202,10 +203,10 @@ int main(int argc, char* argv[])
 			}
 			else if (cmd == "help") {
 				cout << "Valid commands:" << endl << "board" << endl;
-				cout << "status" << endl << "criteria" << endl;
-				cout << "achieve <goal>" << endl;
-				cout << "complete <criterion>" << endl;
-				cout << "improve <criterion>" << endl;
+				cout << "status" << endl << "residences" << endl;
+				cout << "build-road <path#>" << endl;
+				cout << "build-res <housing#>" << endl;
+				cout << "improve <housing#>" << endl;
 				cout << "trade <colour> <give> <take>" << endl;
 				cout << "next" << endl << "save <file>" << endl;
 				cout << "help" << endl;

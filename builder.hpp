@@ -23,6 +23,14 @@ public:
 	// e.g., using 1 wifi would have to use a call "useResources(0, 0, 0, 0, 1)" which is less intuitive
 
 	bool winCheck();
+	void playerStatus() {
+		cout << Player::to_string(colour) << " has " << score << "building porints,";
+		cout << nBrick << " brick, ";
+		cout << nEnergy << " energy, ";
+		cout << nGlass << " glass, ";
+		cout << nHeat << " heat, ";
+		cout << "and " << nWifi << " WiFi." << endl;
+	}
 	bool useResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	Status trade(Builder* other, resourceType item1, resourceType item2);
@@ -30,6 +38,8 @@ public:
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
+	void half();
+
 	std::string loseRandom()
 	{	
 		int nProperties = nBrick + nEnergy + nGlass + nHeat + nWifi;
