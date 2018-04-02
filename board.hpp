@@ -76,9 +76,56 @@ public:
 
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile) { return out; }
 
-	TerminalGrid(size_t width) : terminalWidth{ width }
+	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
 	{
+		auto desired = out.desired[(void*)&tile];
+		assert(desired == make_coord(-1, -1));
+		std::stringstream ss;
+		ss << *tile.info.lu << "--" << tile.info.lu->isConnected(tile.info.ru) << "--" << *tile.info.ru;
+		out.setLocation(desired);
+		out << ss.str();
 
+		out.setLocation(make_coord(desired.first + 1, desired.second));
+		out << " /          \\ ";
+
+		out.setLocation(make_coord(desired.first + 2, desired.second - 1));
+		out << tile.info.lu->isConnected(tile.info.l) << "           " << tile.info.ru->isConnected(tile.info.r);
+
+		out.setLocation(make_coord(desired.first + 3, desired.second - 1));
+		out << "/            \\";
+
+		out.setLocation(make_coord(desired.first + 4, desired.second - 2));
+		ss << *tile.info.l << "           " << *tile.info.r;
+
+		out.setLocation(make_coord(desired.first + 5, desired.second - 1));
+		out << "\\            /";
+
+		out.setLocation(make_coord(desired.first + 6, desired.second - 1));
+		out << tile.info.ll->isConnected(tile.info.l) << "           " << tile.info.rl->isConnected(tile.info.r);
+
+		out.setLocation(make_coord(desired.first + 7, desired.second));
+		out << " \\          / ";
+
+		out.setLocation(make_coord(desired.first + 8, desired.second));
+		ss << *tile.info.ll << "--" << tile.info.ll->isConnected(tile.info.rl) << "--" << *tile.info.rl;
+
+
+		// since this is a grid, overwritting at the same coordinate does not affect final output
+		// doing so prevents possibilities of missing a road/node in the relative directions
+		// TODO: add the next a few lines
+
+		if (tile.info.ll)
+		{
+			out.desired[tile.info.ll] = make_coord(desired.first + 4, desired.second - 12);
+			out << *tile.info.ll;
+		}
+
+		if (tile.info.rl)
+		{
+			out.desired[tile.info.rl] = make_coord(desired.first + 4, desired.second + 13);
+			out << *tile.info.rl;
+		}
+		return out;
 	}
 
 	virtual ~TerminalGrid()
