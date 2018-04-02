@@ -65,5 +65,8 @@
     <ClCompile Include="builder.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="dice.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

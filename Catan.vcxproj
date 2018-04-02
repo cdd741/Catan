@@ -114,6 +114,7 @@
     <ClCompile Include="address.cc" />
     <ClCompile Include="board.cc" />
     <ClCompile Include="builder.cc" />
+    <ClCompile Include="dice.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="resource.cc" />
     <ClCompile Include="tile.cc" />
