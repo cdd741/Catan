@@ -204,6 +204,14 @@ public:
 	}
 };
 
+struct PQ_cmpfirst
+{
+	bool operator()(Coordinate2D const& a, Coordinate2D const& b) const
+	{
+		return a.first > b.first;
+	}
+};
+
 class Board
 {
 public:
@@ -240,6 +248,7 @@ public:
 		buildings.insert(rl);
 
 		std::unordered_map<Coordinate2D, info_cons, Coordinate2DHash> info_stor;
+		std::priority_queue<Coordinate2D, std::vector<Coordinate2D>, PQ_cmpfirst> pq;
 
 		if (layout->graph[make_coord(1, 0)])
 		{
@@ -249,7 +258,10 @@ public:
 				if (info_stor.count(ele.first))
 					info_stor[ele.first].merge(ele.second);
 				else
+				{
 					info_stor[ele.first] = ele.second;
+					pq.emplace(ele.first);
+				}
 			}
 		}
 
@@ -260,24 +272,32 @@ public:
 				if (info_stor.count(ele.first))
 					info_stor[ele.first].merge(ele.second);
 				else
+				{
 					info_stor[ele.first] = ele.second;
+					pq.emplace(ele.first);
+				}
 			}
 		}
 
-		for (auto preferred = 1; preferred <= 8; preferred ++)
+
+		while (!pq.empty())
 		{
-			for (auto& p : info_stor)
+			auto pp = pq.top();
+			pq.pop();
+			auto p = info_stor[pp];
+
+			for (auto& ele : do_construct(pp, p.l, p.lu, p.ru, p.r))
 			{
-				if (p.first.first == preferred)
-					for (auto& ele : do_construct(p.first, p.second.l, p.second.lu, p.second.ru, p.second.r))
-					{
-						if (info_stor.count(ele.first))
-							info_stor[ele.first].merge(ele.second);
-						else
-							info_stor[ele.first] = ele.second;
-					}
+				if (info_stor.count(ele.first))
+					info_stor[ele.first].merge(ele.second);
+				else
+				{
+					info_stor[ele.first] = ele.second;
+					pq.emplace(ele.first);
+				}
 			}
 		}
+
 	}
 
 	std::vector<std::pair<Coordinate2D, info_cons>> do_construct(const Coordinate2D& coord, Building * l, Building * lu, Building * ru, Building * r)
@@ -300,8 +320,6 @@ public:
 		rl->connect(ll);
 		ll->connect(l);
 
-		layout->graph[coord]->info = info_cons{ l, lu, ll, r, ru, rl  };
-
 		buildings.insert(l);
 		buildings.insert(lu);
 		buildings.insert(r);
@@ -310,6 +328,8 @@ public:
 		buildings.insert(ll);
 
 		layout->graph[coord]->coord = coord;
+		layout->graph[coord]->info = info_cons{ l, lu, ll, r, ru, rl  };
+
 		layout->graph[coord]->buildings.insert(l);
 		layout->graph[coord]->buildings.insert(r);
 		layout->graph[coord]->buildings.insert(lu);
@@ -339,6 +359,7 @@ public:
 			info.ru = rl;
 			v.push_back(make_pair(make_coord(coord.first + 2, coord.second + 1), info));
 		}
+
 		return v;
 	}
 
@@ -378,20 +399,24 @@ public:
 
 				if (!exists(x, y - 1) && exists(x - 2, y - 2))
 				{
-					layout->graph[{x - 2, y - 2}]->info.ll->ID = index;
-					addr_map[index++] = layout->graph[{x - 2, y - 2}]->info.ll;
+					layout->graph[make_coord(x - 2, y - 2)]->info.ll->ID = index;
+					addr_map[index++] = layout->graph[make_coord(x - 2, y - 2)]->info.ll;
 				}
 
 				if (!exists(x, y - 1) && exists(x - 1, y - 1))
 				{
-					layout->graph[{x - 1, y - 1}]->info.l->ID = index;
+					layout->graph[make_coord(x - 1, y - 1)]->info.l->ID = index;
 					addr_map[index++] = layout->graph[make_coord(x - 1, y - 1)]->info.l;
 				}
-				
+
+
 				layout->graph[make_coord(x, y)]->info.lu->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.lu;
+
+
 				layout->graph[make_coord(x, y)]->info.ru->ID = index;
 				addr_map[index++] = layout->graph[make_coord(x, y)]->info.ru;
+				
 
 				if (!exists(x, y + 1) && exists(x - 1, y))
 				{
