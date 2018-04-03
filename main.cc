@@ -13,6 +13,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+	Layout * layout = nullptr;
 	while(true){
 		vector<Builder*> players;
 		string fname{ "layout.txt" };
@@ -28,11 +29,11 @@ int main(int argc, char* argv[])
 			else if (argv[i] == "-board") {
 				fname = argv[++i];
 			}
-			else if (argv[i] == "-random-board") {}
+			else if (argv[i] == "-random-board") { layout = new RandomLayout(9); }
 		}
 
-		ifstream layout_in(fname);
-		Board board(new Layout(layout_in, 9));
+		if (!layout) layout = new Layout(ifstream(fname), 9);
+		Board board(layout);
 		board.assignUIIndexes();
 		cout << board;
 

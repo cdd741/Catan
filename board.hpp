@@ -11,13 +11,14 @@
 #include <map>
 #include <sstream>
 #include <string>
+#include <algorithm>
 
 #include "address.hpp"
 #include "builder.hpp"
 
-// #include "status.hpp"
 #include "resource.hpp"
 #include "player.hpp"
+#include "dice.hpp"
 
 class Builder;
 class Tile;
@@ -65,6 +66,31 @@ public:
 
 	*/
 	Graph graph;
+};
+
+class RandomLayout : public Layout
+{
+public:
+	RandomLayout(int nRows) :Layout(nRows) { load(std::stringstream()); }
+	void load(std::istream& in) override
+	{
+		std::stringstream ss;
+		std::vector<unsigned int> tile_types{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4};
+		std::vector<unsigned int> tile_rolls
+		{
+			2, 12,
+			3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11
+		};
+		std::random_shuffle(tile_types.begin(), tile_types.end());
+		std::random_shuffle(tile_rolls.begin(), tile_rolls.end());
+
+		for (auto i = 0; i < tile_types.size(); i++)
+		{
+			ss << tile_types[i] << ' ' << tile_rolls[i] << ' ';
+		}
+		ss << "5 7";
+		Layout::load(ss);
+	}
 };
 
 class TerminalGrid
