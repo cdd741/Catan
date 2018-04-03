@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	Layout * layout = new RandomLayout(9);
+	Layout * layout = nullptr;
 	while(true){
 		vector<Builder*> players;
 		string fname{ "layout.txt" };
