@@ -71,7 +71,7 @@ public:
 class RandomLayout : public Layout
 {
 public:
-	RandomLayout(int nRows) :Layout(nRows) { load(std::stringstream()); }
+	RandomLayout(int nRows) :Layout(nRows) { std::stringstream ss; load(ss); }
 	void load(std::istream& in) override
 	{
 		std::vector<unsigned int> tile_types{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4};
