@@ -33,7 +33,11 @@ int main(int argc, char* argv[])
 			else if (argv[i] == "-random-board") { layout = new RandomLayout(9); }
 		}
 
-		if (!layout) layout = new Layout(ifstream(fname), 9);
+		if (!layout)
+		{
+			ifstream layout_in(fname);
+			layout = new Layout(layout_in, 9);
+		}
 		Board board(layout);
 		board.assignUIIndexes();
 		cout << board;
