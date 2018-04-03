@@ -44,10 +44,10 @@ enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park, UNDEFINED };
 class TerminalGrid;
 class Tile
 {
-	TileType type;
 	std::unordered_set<Road*> roads;		// save adjacent roads     (from bz)
 
 public:
+	const TileType type;
 	Tile(unsigned int roll, unsigned int index, size_t nResources = 1, TileType typ = TileType::UNDEFINED) : nResources{ nResources }, roll{ roll }, index{ index }, type{ typ } {}
 
 	// this is not necessary though, or not perferred imo (i don't like it personally)

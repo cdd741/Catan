@@ -118,6 +118,13 @@ public:
 		return out << ss.str();
 	}
 
+	static std::string twoDigitPrint(unsigned int i)
+	{
+		auto s = std::to_string(i);
+		if (i < 10)return " " + s;
+		else return s;
+	}
+
 	friend TerminalGrid& operator<<(TerminalGrid& out, const Tile& tile)
 	{
 		auto desired = out.desired[(void*)&tile];
@@ -131,13 +138,40 @@ public:
 		out << " /          \\ ";
 
 		out.setLocation(make_coord(desired.first + 2, desired.second - 1));
-		out << *(tile.info.lu->isConnected(tile.info.l)) << "           " << *(tile.info.ru->isConnected(tile.info.r));
+		out << *(tile.info.lu->isConnected(tile.info.l)) << "     " << TerminalGrid::twoDigitPrint(tile.index) << "    " << *(tile.info.ru->isConnected(tile.info.r));
 
 		out.setLocation(make_coord(desired.first + 3, desired.second - 1));
-		out << "/              \\";
+		switch (tile.type)
+		{
+		case TileType::Brick:
+			out << "/     BRICK    \\";
+			break;
+		case TileType::Energy:
+			out << "/    ENERGY    \\";
+			break;
+		case TileType::Heat:
+			out << "/     HEAT     \\";
+			break;
+		case TileType::Glass:
+			out << "/     GLASS    \\";
+			break;
+		case TileType::Wifi:
+			out << "/     WIFI     \\";
+			break;
+		case TileType::Park:
+			out << "/    NETFLIX   \\";
+			break;
+		default:
+			out << "/              \\";
+		}
+		
 
 		out.setLocation(make_coord(desired.first + 4, desired.second - 3));
-		out << *tile.info.l << "            " << *tile.info.r;
+		if (tile.roll == 7)
+			out << *tile.info.l << "            " << *tile.info.r;
+		
+		else
+			out << *tile.info.l << "     " << TerminalGrid::twoDigitPrint(tile.roll) << "     " << *tile.info.r;
 
 		out.setLocation(make_coord(desired.first + 5, desired.second - 1));
 		out << "\\              /";
