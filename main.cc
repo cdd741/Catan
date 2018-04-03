@@ -34,6 +34,8 @@ int main(int argc, char* argv[])
 		ifstream layout_in(fname);
 		Board board(new Layout(layout_in, 9));
 		board.assignUIIndexes();
+		cout << board;
+
 
 		if (players.size() == 0) {
 			players.push_back(new Builder(Player::Blue));
@@ -58,6 +60,10 @@ int main(int argc, char* argv[])
 						cout << "Invalid input." << endl;
 						continue;
 					}
+					if (place > 53) {
+						cout << "Invalid input." << endl;
+						continue;
+					}
 					if (board.buildRes(players[idx], place, true) == Status::OK) break;
 					
 					cout << Status::cantBuildHere << endl;
@@ -70,7 +76,7 @@ int main(int argc, char* argv[])
 		// Add Code Here
 		string cmd;
 		Builder* player;
-		bool won;
+		bool won = false;
 		int currTurn = 0;
 
 		// game play
@@ -81,6 +87,7 @@ int main(int argc, char* argv[])
 			//set dice && roll
 			bool bLoaded = false;
 			while (true) {
+				cout << ">";
 				cin >> cmd;
 				if (cmd == "load")
 				{
@@ -101,6 +108,7 @@ int main(int argc, char* argv[])
 					if (bLoaded) {
 						cout << "Input a roll between 2 and 12:" << endl;
 						while (true) {
+							cout << ">";
 							cin >> roll;
 
 							if (cin.fail()) {
@@ -192,6 +200,7 @@ int main(int argc, char* argv[])
 
 			while (true) {
 				cout << "Please enter your command, enter <help> for more information." << endl;
+				cout << ">";
 				cin >> cmd;
 				if (cin.eof()) {
 					// Save to backup.sv and end game
@@ -211,7 +220,12 @@ int main(int argc, char* argv[])
 				else if (cmd == "build-road") {
 					cout << "Place enter address." << endl;
 					int criteriaNum;
+					cout << ">";
 					cin >> criteriaNum;
+					if (criteriaNum > 71) {
+						cout << "Invalid input." << endl;
+						continue;
+					}
 					Status s = board.buildRoad(player, criteriaNum);
 					//output depends on s: cant build/ no enough resources
 					if (s != Status::OK) cout << s << endl;
@@ -219,7 +233,12 @@ int main(int argc, char* argv[])
 				else if (cmd == "build-res") {
 					cout << "Place enter address." << endl;
 					int criteriaNum;
+					cout << ">";
 					cin >> criteriaNum;
+					if (criteriaNum > 53) {
+						cout << "Invalid input." << endl;
+						continue;
+					}
 					Status s = board.buildRes(player, criteriaNum);
 					//output depends on s: cant build/ no enough resources
 					if (s != Status::OK) cout << s << endl;
@@ -231,7 +250,12 @@ int main(int argc, char* argv[])
 				else if (cmd == "improve") {
 					cout << "Place enter address." << endl;
 					int criteriaNum;
+					cout << ">";
 					cin >> criteriaNum;
+					if (criteriaNum > 53) {
+						cout << "Invalid input." << endl;
+						continue;
+					}
 					Status s = board.improve(player, criteriaNum);
 					//output depends on s: no enough resources
 					if (s != Status::OK) cout << s << endl;
@@ -243,8 +267,10 @@ int main(int argc, char* argv[])
 				else if (cmd == "trade") {
 					string colour, responce;
 					resourceType give, take;
+					cout << ">";
 					cin >> colour >> give >> take;
 					cout << "Does " << colour << "accept this offer?" << endl;
+					cout << ">";
 					cin >> responce;
 					while (true) {
 						if (responce == "yes") {
@@ -287,7 +313,7 @@ int main(int argc, char* argv[])
 				}
 			}
 
-			if (cin.eof() || won) break;
+			if (won) break;
 		}
 
 		if (won) {
