@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 				else break;
 
 				cout << "Builder " << Player::to_string(players[idx]->colour) << ", ";
-				cout << "where do you want to build a basement?" << endl;
+				cout << "where do you want to build a basement?" << endl << ">";
 				int place;
 				while (true) {
 					cin >> place;
