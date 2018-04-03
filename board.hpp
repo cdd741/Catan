@@ -259,11 +259,10 @@ public:
 		size_t line = 0;
 		for (auto & p : grid.grid)
 		{
-			for (; line < p.first; line++)
-				out << "\n";
+			while (line++ < p.first) out << std::endl;
 			if (p.second)
-				out << p.second;
-			out << "\n";
+				out << std::string(p.second);
+			out << std::endl;
 			line++;
 		}
 		return out;
@@ -430,7 +429,7 @@ public:
 	}
 
 
-	void assignUIIndexes(std::ostream* pOut = nullptr)
+	void assignUIIndexes()
 	{
 		assert(layout);
 
@@ -554,16 +553,6 @@ public:
 				line_layout[i][j]->isConnected(line_layout[i][j + 1])->ID = index;
 				road_map[index++] = line_layout[i][j]->isConnected(line_layout[i][j + 1]);
 			}
-		}
-		
-
-		if (pOut)
-		{
-			std::ostream & out = *pOut;
-
-			TerminalGrid terminal(80, layout);
-			terminal.desired[layout->graph[make_coord(0, 0)]] = make_coord(0, 33);
-			terminal << *layout->graph[make_coord(0, 0)];
 		}
 	}
 	
