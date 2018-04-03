@@ -34,6 +34,11 @@ public:
 	bool useResource(resourceType typ, size_t ct = 1);
 	void half();
 
+	bool hasAnyResources() const
+	{
+		return nBrick + nEnergy + nGlass + nHeat + nWifi;
+	}
+
 	std::string loseRandom()
 	{	
 		int nProperties = nBrick + nEnergy + nGlass + nHeat + nWifi;

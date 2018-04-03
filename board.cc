@@ -1,7 +1,6 @@
 #include "board.hpp"
 
 #include "exception.hpp"
-#include "resources.hpp"
 #include <iostream>
 
 using namespace std;
@@ -32,28 +31,28 @@ void Layout::load(istream& in)
 			switch (type)
 			{
 			case 0:
-				pTile = new BRICK(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Brick);
 				break;
 			case 1:
-				pTile = new ENERGY(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Energy);
 				break;
 			case 2:
-				pTile = new GLASS(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Glass);
 				break;
 			case 3:
-				pTile = new HEAT(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Heat);
 				break;
 			case 4:
-				pTile = new WIFI(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Wifi);
 				break;
 			case 5:
-				pTile = new PARK(roll, index);
+				pTile = new Tile(roll, index, 1, TileType::Park);
 				break;
 			default:
 				throw NotImplementedException("undefined layout format");
 			}
 			graph[make_pair(row_idx, base + i)] = pTile;
-			tiles[index] = pTile;
+			tiles[index++] = pTile;
 		}
 	}
 
@@ -61,7 +60,7 @@ void Layout::load(istream& in)
 
 Status Board::movingGeese(int tileidx) {
 	if (!layout->tiles[tileidx] || Geese == layout->tiles[tileidx]) return Status::cantPutHere;
-	Geese->changeProduction();
+	if (Geese) Geese->changeProduction();
 	Geese = layout->tiles[tileidx];
 	Geese->changeProduction();
 	return Status::OK;

@@ -135,8 +135,14 @@ int main(int argc, char* argv[])
 						// helf player resources
 						for (auto p : players) p->half();
 						int place = -1;
+
+						auto stat = Status::OK;
 						do
 						{
+							if (stat != Status::OK)
+							{
+								cout << stat << endl;
+							}
 							cout << "Choose where to place the GEESE." << endl;
 							cin >> place;
 							if (cin.fail()) {
@@ -145,12 +151,12 @@ int main(int argc, char* argv[])
 								cout << "Invalid input." << endl;
 							}
 							//BUG!!! Throw has occured
-						} while (board.movingGeese(place) == Status::OK);
+						} while ((stat = board.movingGeese(place)) != Status::OK);
 						bool hasNeighbours = false;
 						unordered_set<Builder*> nei;
 						for (auto& b : board.neighbours(place))
 						{
-							if (b->owned() && b->owned() != player)
+							if (b->owned() && b->owned() != player && b->owned()->hasAnyResources())
 							{
 								hasNeighbours = true;
 								nei.insert(b->owned());
@@ -204,6 +210,10 @@ int main(int argc, char* argv[])
 				cin >> cmd;
 				if (cin.eof()) {
 					// Save to backup.sv and end game
+					break;
+				}
+				else if (!cin)
+				{
 					break;
 				}
 				else if (cmd == "board") {

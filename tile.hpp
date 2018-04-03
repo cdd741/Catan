@@ -40,7 +40,7 @@ struct info_cons
 typedef std::pair<int, int> Coordinate2D;
 
 
-enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park };
+enum class TileType { Brick, Energy, Glass, Heat, Wifi, Park, UNDEFINED };
 class TerminalGrid;
 class Tile
 {
@@ -48,7 +48,7 @@ class Tile
 	std::unordered_set<Road*> roads;		// save adjacent roads     (from bz)
 
 public:
-	Tile(unsigned int roll, unsigned int index, size_t nResources = 1) : nResources{ nResources }, roll{ roll }, index{ index } {}
+	Tile(unsigned int roll, unsigned int index, size_t nResources = 1, TileType typ = TileType::UNDEFINED) : nResources{ nResources }, roll{ roll }, index{ index }, type{ typ } {}
 
 	// this is not necessary though, or not perferred imo (i don't like it personally)
 	// you may convince me to keep/remove this block though
@@ -76,7 +76,6 @@ public:
 
 protected:
 	size_t nResources;
-	virtual void produce_res(Builder* to) = 0;
 };
 
 #endif

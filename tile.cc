@@ -2,7 +2,6 @@
 #include "address.hpp"
 #include "builder.hpp"
 #include "player.hpp"
-#include "resources.hpp"
 
 using namespace std;
 
