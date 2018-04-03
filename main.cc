@@ -8,12 +8,13 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <ctime>
 
 using namespace std;
 
 int main(int argc, char* argv[])
 {
-	Layout * layout = nullptr;
+	Layout * layout = new RandomLayout(9);
 	while(true){
 		vector<Builder*> players;
 		string fname{ "layout.txt" };

@@ -13,6 +13,16 @@ public:
 		eng.seed(sd);
 	}
 
+	size_t operator()(size_t n) const
+	{
+		return Generate(n);
+	}
+
+	static size_t Generate(size_t n)
+	{
+		return ranged_rand(0, n ? n - 1 : n);
+	}
+
 private:
 	static std::mt19937 eng;
 

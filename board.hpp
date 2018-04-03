@@ -74,21 +74,24 @@ public:
 	RandomLayout(int nRows) :Layout(nRows) { load(std::stringstream()); }
 	void load(std::istream& in) override
 	{
-		std::stringstream ss;
 		std::vector<unsigned int> tile_types{0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4};
 		std::vector<unsigned int> tile_rolls
 		{
 			2, 12,
 			3,3,4,4,5,5,6,6,8,8,9,9,10,10,11,11
 		};
-		std::random_shuffle(tile_types.begin(), tile_types.end());
-		std::random_shuffle(tile_rolls.begin(), tile_rolls.end());
+		std::random_shuffle(tile_types.begin(), tile_types.end(), Dice::Generate);
+		std::random_shuffle(tile_rolls.begin(), tile_rolls.end(), Dice::Generate);
 
+		std::vector<std::pair<unsigned int, unsigned int>> paired{ std::make_pair(5, 7) };
 		for (auto i = 0; i < tile_types.size(); i++)
-		{
-			ss << tile_types[i] << ' ' << tile_rolls[i] << ' ';
-		}
-		ss << "5 7";
+			paired.push_back(std::make_pair(tile_types[i], tile_rolls[i]));
+		std::random_shuffle(paired.begin(), paired.end(), Dice::Generate);
+
+		std::stringstream ss; 
+		for (auto &p : paired)
+			ss << p.first << ' ' << p.second << ' ';
+		
 		Layout::load(ss);
 	}
 };
@@ -174,7 +177,10 @@ public:
 			out << *tile.info.l << "     " << TerminalGrid::twoDigitPrint(tile.roll) << "     " << *tile.info.r;
 
 		out.setLocation(make_coord(desired.first + 5, desired.second - 1));
-		out << "\\              /";
+		if (!tile.bProduction)
+			out << "\\     GEESE    /";
+		else
+			out << "\\              /";
 
 		out.setLocation(make_coord(desired.first + 6, desired.second - 1));
 		out << *(tile.info.ll->isConnected(tile.info.l)) << "            " << *(tile.info.rl->isConnected(tile.info.r));
