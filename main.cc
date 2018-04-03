@@ -320,6 +320,12 @@ int main(int argc, char* argv[])
 					break;
 					// next turn
 				}
+#if _DEBUG
+				else if (cmd == "quit")
+				{
+					return 0;
+				}
+#endif
 				else {
 					cout << "Invalid command" << endl;
 				}
