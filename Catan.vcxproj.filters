@@ -68,5 +68,8 @@
     <ClCompile Include="dice.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="status.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

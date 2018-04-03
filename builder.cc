@@ -56,7 +56,7 @@ Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
 		return Status::OK;
 	}
 	// Not enough resources
-	return Status::notOK;
+	return Status::notEnoughResources;
 }
 
 Status Builder::improve(int address) {
@@ -66,7 +66,7 @@ Status Builder::improve(int address) {
 			return building->improve();
 	}
 	// You cannot build here
-	return Status::notOK;
+	return Status::cantBuildHere;
 }
 
 

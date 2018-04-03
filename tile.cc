@@ -9,33 +9,59 @@ using namespace std;
 void Tile::distribute() {
 	for (auto & b : buildings) {
 		if (type == TileType::Brick) {
-			(b->owned())->addResources(nResources, 0, 0, 0, 0);
-			(b->owned())->iBrick += nResources;
+			if (b->type == Building::Basement) {
+				(b->owned())->addResources(1, 0, 0, 0, 0);
+			}
+			if (b->type == Building::House) {
+				(b->owned())->addResources(2, 0, 0, 0, 0);
+			}
+			if (b->type == Building::Tower) {
+				(b->owned())->addResources(3, 0, 0, 0, 0);
+			}
 		}
 		if (type == TileType::Energy) {
-			(b->owned())->addResources(0, nResources, 0, 0, 0);
-			(b->owned())->iEnergy += nResources;
+			if (b->type == Building::Basement) {
+				(b->owned())->addResources(0, 1, 0, 0, 0);
+			}
+			if (b->type == Building::House) {
+				(b->owned())->addResources(0, 2, 0, 0, 0);
+			}
+			if (b->type == Building::Tower) {
+				(b->owned())->addResources(0, 3, 0, 0, 0);
+			}
 		}
 		if (type == TileType::Glass) {
-			(b->owned())->addResources(0, 0, nResources, 0, 0);
-			(b->owned())->iGlass += nResources;
+			if (b->type == Building::Basement) {
+				(b->owned())->addResources(0, 0, 1, 0, 0);
+			}
+			if (b->type == Building::House) {
+				(b->owned())->addResources(0, 0, 2, 0, 0);
+			}
+			if (b->type == Building::Tower) {
+				(b->owned())->addResources(0, 0, 3, 0, 0);
+			}
 		}
 		if (type == TileType::Heat) {
-			(b->owned())->addResources(0, 0, 0, nResources, 0);
-			(b->owned())->iHeat += nResources;
+			if (b->type == Building::Basement) {
+				(b->owned())->addResources(0, 0, 0, 1, 0);
+			}
+			if (b->type == Building::House) {
+				(b->owned())->addResources(0, 0, 0, 2, 0);
+			}
+			if (b->type == Building::Tower) {
+				(b->owned())->addResources(0, 0, 0, 3, 0);
+			}
 		}
 		if (type == TileType::Wifi) {
-			(b->owned())->addResources(0, 0, 0, 0, nResources);
-			(b->owned())->iWifi += nResources;
-		}
-		if (b->type == Building::Basement) {
-			(b->owned())->score += 1;
-		}
-		if (b->type == Building::House) {
-			(b->owned())->score += 2;
-		}
-		if (b->type == Building::Tower) {
-			(b->owned())->score += 3;
+			if (b->type == Building::Basement) {
+				(b->owned())->addResources(0, 0, 0, 0, 1);
+			}
+			if (b->type == Building::House) {
+				(b->owned())->addResources(0, 0, 0, 0, 2);
+			}
+			if (b->type == Building::Tower) {
+				(b->owned())->addResources(0, 0, 0, 0, 3);
+			}
 		}
 	}
 }

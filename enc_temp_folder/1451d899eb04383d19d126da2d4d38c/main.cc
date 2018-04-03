@@ -136,7 +136,6 @@ int main(int argc, char* argv[])
 								cin.ignore();
 								cout << "Invalid input." << endl;
 							}
-							//BUG!!! Throw has occured
 						} while (board.movingGeese(place) == Status::OK);
 						bool hasNeighbours = false;
 						unordered_set<Builder*> nei;

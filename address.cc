@@ -1,27 +1,26 @@
 #include "address.hpp"
 
 #include "builder.hpp"
+#include "board.hpp"
+
 
 #include <iostream>
 #include <cassert>
-#include "board.hpp"
-
-#include "board.hpp"
 
 using namespace std;
 
 Status Road::build(Builder * owner) {
+	if (owned()) return Status::cantBuildHere;
 	for (auto& b : neighbours) {
-		if (owned()) break;
-		else if (b->owned() || b->checkRoadNeighbour()) {
+		if (b->owned() || b->checkRoadNeighbour()) {
 			if(owner->useResources(0, 0, 0, 1, 1))
 				return Status::OK;
 			// Not Enough
-			else return Status::notOK;
+			else return Status::notEnoughResources;
 		}
 	}
 	// You cannot build here
-	return Status::notOK;
+	return Status::cantBuildHere;
 }
 
 bool Building::checkRoadNeighbour() {
@@ -45,28 +44,23 @@ Status Building::build(Builder * who, bool bInitial)	// bSucceeded
 	// criteria checks
 	// 1: no adjacent residences
 	// 2: at least one road adjacent is built
-	if (!bInitial)
-	{
-		size_t nBuilt = 0;
-		for (auto& nb : neighbours)
-		{
-			if (nb.second && nb.second->owned()) nBuilt++;
-			if (nb.first->type != None) 
-				return Status::notOK;	// adjacent
-		}
-		if (!nBuilt) 
-			return Status::notOK;	// if no roads connecting to it
-									// reject if not enough resources
-		if (!who->useResources(1, 1, 1, 0, 1)) 
-			return Status::notOK;
+	if (owned()) return Status::cantBuildHere; // You cannot build here
+
+	size_t nBuilt = 0;
+	for (auto& nb : neighbours){
+		if (nb.second && nb.second->owned()) nBuilt++;
+		if (nb.first->owned() != nullptr) return Status::cantBuildHere;	// adjacent
 	}
-	else if(owned()) return Status::notOK; // You cannot build here
-	else {
-		type = Basement;
-		owner = who;
-		who->properties.insert(this);
+
+	if (!bInitial){
+		if (!nBuilt) return Status::cantBuildHere;								// if no roads connecting to it
+		if (!who->useResources(1, 1, 1, 0, 1)) return Status::notEnoughResources;   // not enough resources
 	}
-	cout << Player::to_string(who->colour) << " has buildt:" << endl;
+	type = Basement;
+	owner = who;
+	owner->score += 1;
+	who->properties.insert(this);
+	cout << Player::to_string(who->colour) << " has built:" << endl;
 	cout << ID << " Basement" << endl;
 	return Status::OK;
 }
@@ -77,15 +71,17 @@ Status Building::improve()	// allowing deriving possibilities
 	{
 	case None:
 	case Tower:
-		return Status::notOK; // You cannot build here
+		return Status::cantBuildHere; // You cannot build here
 
 	case Basement:	// upgrade to House
-		if (!owner->useResources(0, 0, 2, 3, 0)) return Status::notOK; // Resources Not Enough
+		if (!owner->useResources(0, 0, 2, 3, 0)) return Status::notEnoughResources; // Resources Not Enough
 		type = House;
+		owner->score += 1;
 		return Status::OK;
 	case House:	// upgrade to Tower
-		if (!owner->useResources(3, 2, 2, 2, 1)) return Status::notOK; // Resources Not Enough
+		if (!owner->useResources(3, 2, 2, 2, 1)) return Status::notEnoughResources; // Resources Not Enough
 		type = Tower;
+		owner->score += 1;
 		return Status::OK;
 	default:
 		throw;

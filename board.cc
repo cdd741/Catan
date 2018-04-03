@@ -60,9 +60,7 @@ void Layout::load(istream& in)
 }
 
 Status Board::movingGeese(int tileidx) {
-	if (!layout->tiles[tileidx]) return Status::notOK;
-	if (Geese == layout->tiles[tileidx])
-		return Status::notOK;
+	if (!layout->tiles[tileidx] || Geese == layout->tiles[tileidx]) return Status::cantPutHere;
 	Geese->changeProduction();
 	Geese = layout->tiles[tileidx];
 	Geese->changeProduction();
@@ -70,25 +68,17 @@ Status Board::movingGeese(int tileidx) {
 }
 
 Status Board::buildRoad(Builder* player, int address) {
-	road_map[address]->build(player);
-	return Status::OK;
+	return road_map[address]->build(player);
 }
 
-Status Board::buildRes(Builder* player, int address) {
-	addr_map[address]->build(player);
-	return Status::OK;
+Status Board::buildRes(Builder* player, int address, bool bInitial) {
+	return addr_map[address]->build(player, bInitial);
 }
 
 Status Board::improve(Builder* player, int address) {
-	player->improve(address);
-	return Status::OK;
+	return player->improve(address);
 }
 
-//Status Board::trade(Builder* player1, Builder* player2, resourceType item1, resourceType item2) {
-//	player1->trade(item1, item2);
-//	player2->trade(item2, item1);
-//}
-//
 //// distribute resourses or goto geeseOcccur if dice is 7
 void Board::diceRoll(int dice) {
 	bool anyoneGained = false;

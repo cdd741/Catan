@@ -15,7 +15,7 @@
 #include "address.hpp"
 #include "builder.hpp"
 
-#include "status.hpp"
+// #include "status.hpp"
 #include "resource.hpp"
 #include "player.hpp"
 
@@ -486,7 +486,7 @@ public:
 	
 	Status movingGeese(int tileidx);
 	Status buildRoad(Builder* player, int address);
-	Status buildRes(Builder* player, int address);
+	Status buildRes(Builder* player, int address, bool bInitial = false);
 	Status improve(Builder* player, int address);
 	void playerStatus() {
 		for (auto b : builders)
@@ -499,7 +499,19 @@ public:
 
 
 
-	virtual	~Board() {}
+	//virtual	~Board() {}
+	~Board() {
+		delete layout;
+		for (auto & b : buildings) {
+			delete b;
+		}
+		for (auto & b : road_map) {
+			delete b.second;
+		}
+		for (auto & b : builders) {
+			delete b;
+		}
+	}
 
 	std::unordered_set<Building*>& neighbours(int tileAddr)
 	{
@@ -517,7 +529,7 @@ protected:
 
 	std::vector<Builder*> builders;
 	std::unordered_map<unsigned int, Road*> roads;
-
+	
 
 };
 
