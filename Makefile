@@ -15,3 +15,6 @@ clean:
 	rm ${OBJECTS} ${EXEC} ${DEPENDS}
 
 
+simple:
+	g++ -g -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
+	
