@@ -213,7 +213,7 @@ public:
 	virtual ~TerminalGrid()
 	{
 		for (auto & p : grid)
-			delete p.second;
+			delete[] p.second;
 	}
 
 	Coordinate2D location(void* object) const
@@ -261,7 +261,8 @@ public:
 		{
 			while (line++ < p.first) out << std::endl;
 			if (p.second)
-				out << std::string(p.second);
+				for (auto i = 0; i < grid.terminalWidth; i++)
+					out << p.second[i];
 			out << std::endl;
 			line++;
 		}
