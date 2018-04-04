@@ -620,6 +620,18 @@ public:
 	{
 		addr_map[addr]->type = typ;
 		addr_map[addr]->owner = player;
+		switch (typ)
+		{
+		case Building::Basement:
+			player->score++;
+			break;
+		case Building::House:
+			player->score += 2;
+			break;
+		case Building::Tower:
+			player->score += 3;
+			break;
+		}
 	}
 
 	void setGeese(int addrTile)	// load only
