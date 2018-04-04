@@ -82,7 +82,8 @@ Status Board::improve(Builder* player, int address) {
 void Board::diceRoll(int dice) {
 	bool anyoneGained = false;
 	for (auto & t : layout->tiles) {
-		if (t.second->roll == dice) {
+		if (t.second == Geese) continue;
+		if (t.second && t.second->roll == dice) {
 			t.second->distribute();
 		}
 	}

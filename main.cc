@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 			string fname{ "layout.txt" };
 
 			for (int i = 1; i < argc; ++i) {
-				cout << argv[i] << endl;
 				if (argv[i] == string("-seed")) {
 					stringstream ss{ argv[++i] };
 					int n;
@@ -240,20 +239,19 @@ int main(int argc, char* argv[])
 								{
 									cout << stat << endl;
 								}
-								cout << "Choose where to place the GEESE." << endl;
+								cout << "Choose where to pleace the GEESE." << endl;
 								cout << ">";
-								cin >> place;
-
+								string tok;
+								cin >> tok;
 								if (cin.eof()) throw "end";
-								if (cin.fail()) {
-									cin.clear();
-									cin.ignore();
+
+								stringstream ss(tok);
+								ss >> place;
+
+								if (ss.fail()) 
 									cout << "Invalid input." << endl;
-								}
-								if (place > 53) {
+								if (place > 53)
 									cout << "Invalid input." << endl;
-									continue;
-								}
 								//BUG!!! Throw has occured
 							} while ((stat = board.movingGeese(place)) != Status::OK);
 							bool hasNeighbours = false;
@@ -268,13 +266,13 @@ int main(int argc, char* argv[])
 							}
 							if (hasNeighbours)
 							{
-								cout << "Builder " << Player::to_string(player->colour) << " can shoose to steal from ";
+								cout << "Builder " << Player::to_string(player->colour) << " can choose to steal from";
 								stringstream ss;
 								for (auto & n : nei)
 								{
-									ss << Player::to_string(n->colour) << ',';
+									ss << ' ' << Player::to_string(n->colour) << ',';
 								}
-								cout << ss.str().substr(0, ss.str().length() - 1) << '.';
+								cout << ss.str().substr(0, ss.str().length() - 1) << '.' << endl;
 								cout << "Choose a builder to steal from." << endl;
 								string tok;
 								cout << ">";
@@ -289,13 +287,15 @@ int main(int argc, char* argv[])
 										if (Player::to_string(n->colour) == tok)
 										{
 											bHandled = true;
+											string p = n->loseRandom();
 											cout << "Builder " << Player::to_string(player->colour)
-												<< " steals " << n->loseRandom()
-												<< " from builder " << Player::to_string(n->colour);
+												<< " steals " << p
+												<< " from builder " << Player::to_string(n->colour) 
+												<< '.' << endl;
 
 										}
 									}
-									cout << "Invalid." << endl;
+									if (!bHandled) cout << "Invalid." << endl;
 								}
 
 							}
@@ -322,6 +322,7 @@ int main(int argc, char* argv[])
 					{
 						break;
 					}
+					else if (cmd == "current-player") cout << Player::to_string(player->colour) << endl;
 					else if (cmd == "board") {
 						cout << board;
 					}
@@ -435,7 +436,7 @@ int main(int argc, char* argv[])
 								cin >> take;
 							}
 							catch (string &s) {
-								if (s == "eof") throw;
+								if (s == "eof") throw "end";
 								else cout << "Invalid input." << endl;
 							}
 							break;
@@ -464,6 +465,7 @@ int main(int argc, char* argv[])
 
 					}
 					else if (cmd == "help") {
+						cout << "current-player" << endl;;
 						cout << "Valid commands:" << endl << "board" << endl;
 						cout << "status" << endl << "residences" << endl;
 						cout << "build-road <path#>" << endl;

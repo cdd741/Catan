@@ -65,6 +65,7 @@ public:
 				break;
 
 		}
+		while (v[i++] == 0) if (i == v.size()) i = 0;
 		switch (i)
 		{
 		case 0:
