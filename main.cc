@@ -156,6 +156,10 @@ int main(int argc, char* argv[])
 								cin.ignore();
 								cout << "Invalid input." << endl;
 							}
+                            if (place > 53) {
+                                cout << "Invalid input." << endl;
+                                continue;
+                            }
 							//BUG!!! Throw has occured
 						} while ((stat = board.movingGeese(place)) != Status::OK);
 						bool hasNeighbours = false;
