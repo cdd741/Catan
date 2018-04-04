@@ -44,7 +44,7 @@ class Layout
 public:
 	Layout(int nRows) : nRows{ nRows } { row_ct = new int[nRows] { 1, 2, 3, 2, 3, 2, 3, 2, 1 }; }
 	Layout(std::istream& in, int nRows) : Layout(nRows) { load(in); }
-	virtual ~Layout() { delete row_ct; for (auto & ele : graph) delete ele.second; }
+	virtual ~Layout() { delete[] row_ct; for (auto & ele : graph) delete ele.second; }
 public:
 	int* row_ct;
 	int nRows;
