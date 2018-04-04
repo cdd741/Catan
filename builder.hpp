@@ -31,7 +31,7 @@ public:
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	Status trade(Builder* other, resourceType item1, resourceType item2);
 	Status improve(int address);
-	bool Builder::addResource(resourceType typ, size_t ct);
+	bool addResource(resourceType typ, size_t ct);
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);

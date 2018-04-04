@@ -16,15 +16,16 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	Layout * layout = nullptr;
-	Board * pBoard = nullptr;
-	int currTurn = 0;
-	vector<Builder*> players;
+	
+	string layout_fname{ "layout.txt" };
 	vector<string> players_data;
 	int loaded_geese = -1;
+
 	try {
 		while (true) {
-			
-			string fname{ "layout.txt" };
+
+			vector<Builder*> players;
+			int currTurn = 0;
 
 			for (int i = 1; i < argc; ++i) {
 				if (argv[i] == string("-seed")) {
@@ -49,14 +50,14 @@ int main(int argc, char* argv[])
 					in >> loaded_geese;
 				}
 				else if (argv[i] == string("-board")) {
-					fname = argv[++i];
+					layout_fname = argv[++i];
 				}
 				else if (argv[i] == string("-random-board")) { layout = new RandomLayout(9); }
 			}
 
 			if (!layout)
 			{
-				ifstream layout_in(fname);
+				ifstream layout_in(layout_fname);
 				layout = new Layout(layout_in, 9);
 			}
 			Board board(layout);

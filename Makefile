@@ -17,3 +17,7 @@ clean:
 
 simple:
 	g++ -g -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
+
+debug:
+	g++ -g -D_DEBUG -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
+	
