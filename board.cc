@@ -88,35 +88,24 @@ void Board::diceRoll(int dice) {
 	}
 
 	for (int i = 0; i<4; ++i) {
-		if (builders[i]->iHeat == 0 && builders[i]->iBrick == 0 && builders[i]->iEnergy == 0
-			&& builders[i]->iWifi == 0 && builders[i]->iGlass == 0) continue;
-		else {
+		if (!(builders[i]->iHeat == 0 && builders[i]->iBrick == 0 && builders[i]->iEnergy == 0
+			&& builders[i]->iWifi == 0 && builders[i]->iGlass == 0)) {
+			cout << "Builder " << Player::to_string(builders[i]->colour) << " gained:" << endl;
+			if (builders[i]->iHeat) cout << builders[i]->iHeat << " Heat" << endl;
+			if (builders[i]->iBrick) cout << builders[i]->iBrick << " Brick" << endl;
+			if (builders[i]->iEnergy) cout << builders[i]->iEnergy << " Energy" << endl;
+			if (builders[i]->iWifi) cout << builders[i]->iWifi << " Wifi" << endl;
+			if (builders[i]->iGlass) cout << builders[i]->iGlass << " Glass" << endl;
 			anyoneGained = true;
-			break;
-		}
-	}
-
-	if (anyoneGained) {
-
-		for (int i = 0; i<4; ++i) {
-			if (i == 0) cout << "Builder Blue gained:" << endl;
-			if (i == 1) cout << "Builder Red gained:" << endl;
-			if (i == 2) cout << "Builder Orange gained:" << endl;
-			if (i == 3) cout << "Builder Orange gained:" << endl;
-			cout << builders[i]->iHeat << " Heat" << endl;
-			cout << builders[i]->iBrick << " Brick" << endl;
-			cout << builders[i]->iEnergy << " Energy" << endl;
-			cout << builders[i]->iWifi << " Wifi" << endl;
-			cout << builders[i]->iGlass << " Glass" << endl;
 			builders[i]->iHeat = 0;
 			builders[i]->iBrick = 0;
 			builders[i]->iEnergy = 0;
 			builders[i]->iWifi = 0;
 			builders[i]->iGlass = 0;
 		}
-
 	}
-	else {
+
+	if (!anyoneGained) {
 		cout << "No builders gained resources." << endl;
 	}
 }

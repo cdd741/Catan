@@ -13,8 +13,10 @@ Status Road::build(Builder * owner) {
 	if (owned()) return Status::cantBuildHere;
 	for (auto& b : neighbours) {
 		if (b->owned() || b->checkRoadNeighbour()) {
-			if(owner->useResources(0, 0, 0, 1, 1))
+			if (owner->useResources(0, 0, 0, 1, 1)) {
+				this->owner = owner;
 				return Status::OK;
+			}
 			// Not Enough
 			else return Status::notEnoughResources;
 		}
@@ -34,8 +36,11 @@ bool Building::checkRoadNeighbour() {
 
 ostream &operator<<(ostream& out, const Road &r)
 {
-	if (r.ID < 10) out << ' ' << r.ID;
-	else out << r.ID;
+	if (r.owned()) out << Player::to_string(r.owned()->colour).substr(0, 1) << 'R';
+	else {
+		if (r.ID < 10) out << ' ' << r.ID;
+		else out << r.ID;
+	}
 	return out;
 }
 

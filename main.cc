@@ -150,6 +150,7 @@ int main(int argc, char* argv[])
 								cout << stat << endl;
 							}
 							cout << "Choose where to place the GEESE." << endl;
+							cout << ">";
 							cin >> place;
 							if (cin.fail()) {
 								cin.clear();
