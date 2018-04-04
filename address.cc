@@ -82,11 +82,13 @@ Status Building::improve()	// allowing deriving possibilities
 		if (!owner->useResources(0, 0, 2, 3, 0)) return Status::notEnoughResources; // Resources Not Enough
 		type = House;
 		owner->score += 1;
+		cout << "Successfully improved from Basement to House!" << endl;
 		return Status::OK;
 	case House:	// upgrade to Tower
 		if (!owner->useResources(3, 2, 2, 2, 1)) return Status::notEnoughResources; // Resources Not Enough
 		type = Tower;
 		owner->score += 1;
+		cout << "Successfully improved from House to Tower!" << endl;
 		return Status::OK;
 	default:
 		throw;

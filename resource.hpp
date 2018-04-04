@@ -16,6 +16,8 @@ static const std::unordered_map<std::string, resourceType> mapping =
 	{ "WIFI", resourceType::WIFI },
 };
 
+
+
 std::istream &operator>>(std::istream &in, resourceType &b);
 
 #endif // !RESOURCE_H
