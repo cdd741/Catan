@@ -3,6 +3,8 @@
 #include "dice.hpp"
 #include "address.hpp"
 
+#include <cassert>
+
 using namespace std;
 bool Builder::winCheck() {
 	return score == 10;
@@ -132,8 +134,8 @@ void Builder::half() {
 	int times = quantity / 2;
 	if (quantity >= 10) {
 		for (int i = 0; i < times; ++i) {
-			CustomDice cDice{ 1, quantity };
-			unsigned int roll = cDice.roll();
+			CustomDice cDice(1, quantity);
+			int roll = cDice.roll();
 			if ((roll -= nBrick) <= 0) {
 				--nBrick;
 				++lBrick;
@@ -151,6 +153,7 @@ void Builder::half() {
 				++lHeat;
 			}
 			else {
+				assert(roll <= nWifi);
 				--nWifi;
 				++lWifi;
 			}
@@ -158,11 +161,11 @@ void Builder::half() {
 		}
 		cout << "Builder " << Player::to_string(colour) << "loses " << times << " resouces to the geese. ";
 		cout << "They lose:" << endl;
-		if (lBrick != 0) cout << lBrick << "BRICK" << endl;
-		if (lEnergy != 0) cout << lEnergy << "ENERGY" << endl;
-		if (lGlass != 0) cout << lGlass << "GLASS" << endl;
-		if (lHeat != 0) cout << lHeat << "HEAT" << endl;
-		if (lWifi != 0) cout << lWifi << "WIFI" << endl;
+		if (lBrick != 0) cout << lBrick << " BRICK" << endl;
+		if (lEnergy != 0) cout << lEnergy << " ENERGY" << endl;
+		if (lGlass != 0) cout << lGlass << " GLASS" << endl;
+		if (lHeat != 0) cout << lHeat << " HEAT" << endl;
+		if (lWifi != 0) cout << lWifi << " WIFI" << endl;
 	}
 }
 

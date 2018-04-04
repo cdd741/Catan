@@ -1,20 +1,22 @@
-#include "board.hpp"
-#include "builder.hpp"
-#include "resource.hpp"
-#include "dice.hpp"
-#include "status.hpp"
-
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <ctime>
 
+#include "board.hpp"
+#include "builder.hpp"
+#include "resource.hpp"
+#include "dice.hpp"
+#include "status.hpp"
+#include "exception.hpp"
+
 using namespace std;
 
 int main(int argc, char* argv[])
 {
 	Layout * layout = nullptr;
+	Board * pBoard = nullptr;
 	int currTurn = 0;
 	vector<Builder*> players;
 	vector<string> players_data;
@@ -171,356 +173,374 @@ int main(int argc, char* argv[])
 			Builder* player;
 			bool won = false;
 			
-
-			// game play
-			while (true) {
-				if (currTurn == 4) currTurn -= 4;
-				player = players[currTurn];
-				cout << "Player " << Player::to_string(player->colour) << " set dice." << endl;
-				//set dice && roll
-				bool bLoaded = false;
+			try
+			{
+				// game play
 				while (true) {
-					cout << ">";
-					cin >> cmd;
-
-					if (cin.eof()) throw "end";
-					if (cmd == "load")
-					{
-						bLoaded = true;
-						cout << "Loaded dice set." << endl;
-						//d = new LoadedDice(2);
-					}
-					else if (cmd == "fair")
-					{
-						//set to fairdice
-						bLoaded = false;
-						cout << "Fair dice set." << endl;
-					}
-					else if (cmd == "roll")
-					{
-						int roll;
-						//check dicetype && roll.
-						if (bLoaded) {
-							cout << "Input a roll between 2 and 12:" << endl;
-							while (true) {
-								cout << ">";
-								cin >> roll;
-
-								if (cin.eof()) throw "end";
-								if (cin.fail()) {
-									cin.clear();
-									cin.ignore();
-									cout << "Invalid input." << endl;
-								}
-								else if (roll <= 12 && roll >= 2) break;
-								else cout << "Invalid roll." << endl;
-							}
-							// set fair dice
-						}
-						else
+					if (currTurn == 4) currTurn -= 4;
+					player = players[currTurn];
+					cout << "Player " << Player::to_string(player->colour) << " set dice." << endl;
+					//set dice && roll
+					bool bLoaded = false;
+					while (true) {
+						cout << ">";
+						cin >> cmd;
+						if (cin.eof()) throw EOFException();
+						if (cmd == "load")
 						{
-							FairDice fd;
-							roll = fd.roll();
+							bLoaded = true;
+							cout << "Loaded dice set." << endl;
+							//d = new LoadedDice(2);
 						}
-
-						cout << "Dice rolled to " << roll << endl;
-
-						if (roll == 7)
+						else if (cmd == "fair")
 						{
-							cout << "A SEVEN has occured." << endl;
-							// helf player resources
-							for (auto p : players) p->half();
-							int place = -1;
+							//set to fairdice
+							bLoaded = false;
+							cout << "Fair dice set." << endl;
+						}
+						else if (cmd == "roll")
+						{
+							int roll;
+							//check dicetype && roll.
+							if (bLoaded) {
+								cout << "Input a roll between 2 and 12:" << endl;
+								while (true) {
+									cout << ">";
+									cin >> roll;
 
-							auto stat = Status::OK;
-							do
-							{
-								if (stat != Status::OK)
-								{
-									cout << stat << endl;
-								}
-								cout << "Choose where to pleace the GEESE." << endl;
-								cout << ">";
-								string tok;
-								cin >> tok;
-								if (cin.eof()) throw "end";
-
-								stringstream ss(tok);
-								ss >> place;
-
-								if (ss.fail()) 
-									cout << "Invalid input." << endl;
-								if (place > 53)
-									cout << "Invalid input." << endl;
-								//BUG!!! Throw has occured
-							} while ((stat = board.movingGeese(place)) != Status::OK);
-							bool hasNeighbours = false;
-							unordered_set<Builder*> nei;
-							for (auto& b : board.neighbours(place))
-							{
-								if (b->owned() && b->owned() != player && b->owned()->hasAnyResources())
-								{
-									hasNeighbours = true;
-									nei.insert(b->owned());
-								}
-							}
-							if (hasNeighbours)
-							{
-								cout << "Builder " << Player::to_string(player->colour) << " can choose to steal from";
-								stringstream ss;
-								for (auto & n : nei)
-								{
-									ss << ' ' << Player::to_string(n->colour) << ',';
-								}
-								cout << ss.str().substr(0, ss.str().length() - 1) << '.' << endl;
-								cout << "Choose a builder to steal from." << endl;
-								string tok;
-								cout << ">";
-								cin >> tok;
-
-								if (cin.eof()) throw "end";
-								bool bHandled = false;
-								while (!bHandled)
-								{
-									for (auto& n : nei)
-									{
-										if (Player::to_string(n->colour) == tok)
-										{
-											bHandled = true;
-											string p = n->loseRandom();
-											cout << "Builder " << Player::to_string(player->colour)
-												<< " steals " << p
-												<< " from builder " << Player::to_string(n->colour) 
-												<< '.' << endl;
-
-										}
+									if (cin.eof()) throw EOFException();
+									if (cin.fail()) {
+										cin.clear();
+										cin.ignore();
+										cout << "Invalid input." << endl;
 									}
-									if (!bHandled) cout << "Invalid." << endl;
+									else if (roll <= 12 && roll >= 2) break;
+									else cout << "Invalid roll." << endl;
 								}
-
+								// set fair dice
 							}
 							else
-								cout << "Builder " << Player::to_string(player->colour)
-								<< " has no builders to steal from." << endl;
+							{
+								FairDice fd;
+								roll = fd.roll();
+							}
+
+							cout << "Dice rolled to " << roll << endl;
+
+							if (roll == 7)
+							{
+								cout << "A SEVEN has occured." << endl;
+								// helf player resources
+								for (auto p : players) p->half();
+								int place = -1;
+
+								auto stat = Status::OK;
+								do
+								{
+									if (stat != Status::OK)
+									{
+										cout << stat << endl;
+									}
+									cout << "Choose where to pleace the GEESE." << endl;
+									cout << ">";
+									string tok;
+									cin >> tok;
+									if (cin.eof()) throw EOFException();
+
+									stringstream ss(tok);
+									ss >> place;
+
+									if (ss.fail())
+										cout << "Invalid input." << endl;
+									if (place > 53)
+										cout << "Invalid input." << endl;
+									//BUG!!! Throw has occured
+								} while ((stat = board.movingGeese(place)) != Status::OK);
+								bool hasNeighbours = false;
+								unordered_set<Builder*> nei;
+								for (auto& b : board.neighbours(place))
+								{
+									if (b->owned() && b->owned() != player && b->owned()->hasAnyResources())
+									{
+										hasNeighbours = true;
+										nei.insert(b->owned());
+									}
+								}
+								if (hasNeighbours)
+								{
+									cout << "Builder " << Player::to_string(player->colour) << " can choose to steal from";
+									stringstream ss;
+									for (auto & n : nei)
+									{
+										ss << ' ' << Player::to_string(n->colour) << ',';
+									}
+									cout << ss.str().substr(0, ss.str().length() - 1) << '.' << endl;
+									cout << "Choose a builder to steal from." << endl;
+									string tok;
+									cout << ">";
+									cin >> tok;
+
+									if (cin.eof()) throw EOFException();
+									bool bHandled = false;
+									while (!bHandled)
+									{
+										for (auto& n : nei)
+										{
+											if (Player::to_string(n->colour) == tok)
+											{
+												bHandled = true;
+												string p = n->loseRandom();
+												cout << "Builder " << Player::to_string(player->colour)
+													<< " steals " << p
+													<< " from builder " << Player::to_string(n->colour)
+													<< '.' << endl;
+
+											}
+										}
+										if (!bHandled) cout << "Invalid." << endl;
+									}
+
+								}
+								else
+									cout << "Builder " << Player::to_string(player->colour)
+									<< " has no builders to steal from." << endl;
+							}
+							else
+								board.diceRoll(roll);
+							break;
 						}
-						else
-							board.diceRoll(roll);
-						break;
-					}
-					else cout << "Invalid input." << endl;
+						else cout << "Invalid input." << endl;
 
-				}
+					}
 
-				while (true) {
-					cout << "Please enter your command, enter <help> for more information." << endl;
-					cout << ">";
-					cin >> cmd;
-
-					if (cin.eof()) throw "end";
-
-					else if (!cin)
-					{
-						break;
-					}
-					else if (cmd == "current-player") cout << Player::to_string(player->colour) << endl;
-					else if (cmd == "board") {
-						cout << board;
-					}
-					else if (cmd == "status") {
-						board.playerStatus();
-					}
-					else if (cmd == "residences") {
-						for (auto &prop : players[currTurn]->properties) {
-							cout << prop->ID << " ";
-						}
-						cout << endl;
-					}
-					else if (cmd == "build-road") {
-						cout << "Place enter address." << endl;
-						int criteriaNum;
+					while (true) {
+						cout << "Please enter your command, enter <help> for more information." << endl;
 						cout << ">";
-						cin >> criteriaNum;
+						cin >> cmd;
 
-						if (cin.eof()) throw "end";
-						if (cin.fail()) {
-							cin.clear();
-							cin.ignore();
-							cout << "Invalid input." << endl;
-						}
-						if (criteriaNum > 71) {
-							cout << "Invalid input." << endl;
-							continue;
-						}
-						Status s = board.buildRoad(player, criteriaNum);
-						//output depends on s: cant build/ no enough resources
-						if (s != Status::OK) cout << s << endl;
-					}
-					else if (cmd == "build-res") {
-						cout << "Place enter address." << endl;
-						int criteriaNum;
-						cout << ">";
-						cin >> criteriaNum;
+						if (cin.eof()) throw EOFException();
 
-						if (cin.eof()) throw "end";
-						else if (cin.fail()) {
-							cin.clear();
-							cin.ignore();
-							cout << "Invalid input." << endl;
-							continue;
+						else if (!cin)
+						{
+							break;
 						}
-						else if (criteriaNum > 53) {
-							cout << "Invalid input." << endl;
-							continue;
+						else if (cmd == "current-player") cout << Player::to_string(player->colour) << endl;
+						else if (cmd == "board") {
+							cout << board;
 						}
-						else {
-							Status s = board.buildRes(player, criteriaNum);
+						else if (cmd == "status") {
+							board.playerStatus();
+						}
+						else if (cmd == "residences") {
+							for (auto &prop : players[currTurn]->properties) {
+								cout << prop->ID << " ";
+							}
+							cout << endl;
+						}
+						else if (cmd == "build-road") {
+							cout << "Place enter address." << endl;
+							int criteriaNum;
+							cout << ">";
+							cin >> criteriaNum;
+
+							if (cin.eof())
+							{
+								throw EOFException();
+							}
+							if (cin.fail()) {
+								cin.clear();
+								cin.ignore();
+								cout << "Invalid input." << endl;
+							}
+							if (criteriaNum > 71) {
+								cout << "Invalid input." << endl;
+								continue;
+							}
+							Status s = board.buildRoad(player, criteriaNum);
 							//output depends on s: cant build/ no enough resources
+							if (s != Status::OK) cout << s << endl;
+						}
+						else if (cmd == "build-res") {
+							cout << "Place enter address." << endl;
+							int criteriaNum;
+							cout << ">";
+							cin >> criteriaNum;
+
+							if (cin.eof()) throw EOFException();
+							else if (cin.fail()) {
+								cin.clear();
+								cin.ignore();
+								cout << "Invalid input." << endl;
+								continue;
+							}
+							else if (criteriaNum > 53) {
+								cout << "Invalid input." << endl;
+								continue;
+							}
+							else {
+								Status s = board.buildRes(player, criteriaNum);
+								//output depends on s: cant build/ no enough resources
+								if (s != Status::OK) cout << s << endl;
+								if (player->winCheck()) {
+									won = true;
+									break;
+								}
+							}
+						}
+						else if (cmd == "improve") {
+							cout << "Place enter address." << endl;
+							int criteriaNum;
+							cout << ">";
+							cin >> criteriaNum;
+
+							if (cin.eof()) throw EOFException();
+							else if (cin.fail()) {
+								cin.clear();
+								cin.ignore();
+								cout << "Invalid input." << endl;
+								continue;
+							}
+							else if (criteriaNum > 53) {
+								cout << "Invalid input." << endl;
+								continue;
+							}
+							Status s = board.improve(player, criteriaNum);
+							//output depends on s: no enough resources
 							if (s != Status::OK) cout << s << endl;
 							if (player->winCheck()) {
 								won = true;
 								break;
 							}
 						}
-					}
-					else if (cmd == "improve") {
-						cout << "Place enter address." << endl;
-						int criteriaNum;
-						cout << ">";
-						cin >> criteriaNum;
-
-						if (cin.eof()) throw "end";
-						else if (cin.fail()) {
-							cin.clear();
-							cin.ignore();
-							cout << "Invalid input." << endl;
-							continue;
-						}
-						else if (criteriaNum > 53) {
-							cout << "Invalid input." << endl;
-							continue;
-						}
-						Status s = board.improve(player, criteriaNum);
-						//output depends on s: no enough resources
-						if (s != Status::OK) cout << s << endl;
-						if (player->winCheck()) {
-							won = true;
-							break;
-						}
-					}
-					else if (cmd == "trade") {
-						string responce, colour;
-						resourceType give, take;
-						cout << "Please enter who do you want to trade with." << endl << ">";
-						while (true) {
-							cin >> colour;
-							if (colour == "Blue" || colour == "Red" || colour == "Orange" || colour == "Yellow") break;
-							cout << "Wrong input, please check the first letter is capitalized." << endl << '>';
-						}
-						if (cin.eof()) throw "end";
-						cout << "Please enter what do you want to give." << endl;
-						while (true) {
-							cout << ">";
-							try {
-								cin >> give;
-							} catch(string &s) {
-								if (s == "eof") throw "end";
-								else cout << "Invalid input." << endl;
-								continue;
-							}
-							break;
-						}
-						cout << "Please enter what do you want to take." << endl;
-						while (true) {
-							cout << ">";
-							try {
-								cin >> take;
-							}
-							catch (string &s) {
-								if (s == "eof") throw "end";
-								else cout << "Invalid input." << endl;
-							}
-							break;
-						}
-						cout << "Does " << colour << " accept this offer? (yes/no)" << endl;
-						while (true) {
-							cout << ">";
-							cin >> responce;
-							if (cin.eof()) throw "end";
-							if (responce == "yes") {
-								Builder * player2;
-								if (colour == "Blue") player2 = players[0];
-								else if (colour == "Red") player2 = players[1];
-								else if (colour == "Orange") player2 = players[2];
-								else if (colour == "Yellow") player2 = players[3];
-								/* self-assign check?*/
-								Status s = player->trade(player2, give, take);
+						else if (cmd == "trade") {
+							string responce, colour;
+							resourceType give, take;
+							cout << "Please enter who do you want to trade with." << endl << ">";
+							while (true) {
+								try {
+									cin >> colour;
+								}
+								catch(string &s){
+									cout << "Wrong input, please check the first letter is capitalized." << endl << '>';
+									continue;
+								}
 								break;
 							}
-							else if (responce == "no") break;
-							else {
-								cout << "Invalid command" << endl;
-								continue;
+							if (cin.eof()) throw EOFException();
+							cout << "Please enter what do you want to give." << endl;
+							while (true) {
+								cout << ">";
+								try {
+									cin >> give;
+								}
+								catch (string &s) {
+									if (s == "eof") throw EOFException();
+									else cout << "Invalid input." << endl;
+									continue;
+								}
+								break;
 							}
+							cout << "Please enter what do you want to take." << endl;
+							while (true) {
+								cout << ">";
+								try {
+									cin >> take;
+								}
+								catch (const InvalidInputException& e) {
+									cout << "Invalid input." << endl;
+								}
+								break;
+							}
+							cout << "Does " << colour << " accept this offer? (yes/no)" << endl;
+							while (true) {
+								cout << ">";
+								cin >> responce;
+								if (cin.eof()) throw EOFException();
+								if (responce == "yes") {
+									Builder * player2;
+									if (colour == "Blue") player2 = players[0];
+									else if (colour == "Red") player2 = players[1];
+									else if (colour == "Orange") player2 = players[2];
+									else if (colour == "Yellow") player2 = players[3];
+									/* self-assign check?*/
+									Status s = player->trade(player2, give, take);
+									break;
+								}
+								else if (responce == "no") break;
+								else {
+									cout << "Invalid command" << endl;
+									continue;
+								}
+							}
+
 						}
-
-					}
-					else if (cmd == "help") {
-						cout << "current-player" << endl;;
-						cout << "Valid commands:" << endl << "board" << endl;
-						cout << "status" << endl << "residences" << endl;
-						cout << "build-road <path#>" << endl;
-						cout << "build-res <housing#>" << endl;
-						cout << "improve <housing#>" << endl;
-						cout << "trade <colour> <give> <take>" << endl;
-						cout << "next" << endl << "save <file>" << endl;
-						cout << "help" << endl;
-					}
-					else if (cmd == "save") {
-						string file;
-						cin >> file;
-						// Add Code Here
-						ofstream save(file);
-						save << currTurn << endl;
-						board.saveTo(save);
-					}
-					else if (cmd == "next") {
-						++currTurn;
-						break;
-						// next turn
-					}
+						else if (cmd == "help") {
+							cout << "current-player" << endl;;
+							cout << "Valid commands:" << endl << "board" << endl;
+							cout << "status" << endl << "residences" << endl;
+							cout << "build-road <path#>" << endl;
+							cout << "build-res <housing#>" << endl;
+							cout << "improve <housing#>" << endl;
+							cout << "trade <colour> <give> <take>" << endl;
+							cout << "next" << endl << "save <file>" << endl;
+							cout << "help" << endl;
+						}
+						else if (cmd == "save") {
+							string file;
+							cin >> file;
+							// Add Code Here
+							ofstream save(file);
+							save << currTurn << endl;
+							board.saveTo(save);
+						}
+						else if (cmd == "next") {
+							++currTurn;
+							break;
+							// next turn
+						}
 #if _DEBUG
-					else if (cmd == "quit")
-					{
-						return 0;
-					}
+						else if (cmd == "quit")
+						{
+							return 0;
+						}
 #endif
-					else {
-						cout << "Invalid command" << endl;
+						else {
+							cout << "Invalid command" << endl;
+						}
 					}
-				}
 
-				if (won) break;
+					if (won) break;
+				}
 			}
+			catch (const EOFException& e)
+			{
+				ofstream save("backup.sv");
+				save << currTurn << endl;
+				board.saveTo(save);
+			}
+
 
 			if (won) {
 				cout << Player::to_string(player->colour) << " won!" << endl;
 				cout << "Would you like to play again? (yes/no)" << endl;
 				while (true) {
-					cout << '<';
+					cout << '>';
 					cin >> cmd;
 					if (cmd == "yes") break;
 					else if (cmd == "no") break;
 					else cout << "Invalid input." << endl;
 				}
 			}
+
 			// destruct
+
+			players.clear();
 
 			if (cmd != "yes") break;
 		}
 	}
 	catch(string &str) {
-		// when eof
-		// Save as backup.sv
+
 	}
 
 	return 0;
