@@ -153,6 +153,8 @@ void Building::connect(Building* other)
 	{
 		neighbours[other] = new Road();
 		other->neighbours[this] = neighbours[other];
+		neighbours[other]->neighbours.insert(this);
+		neighbours[other]->neighbours.insert(other);
 	}
 }
 

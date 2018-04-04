@@ -620,6 +620,7 @@ public:
 	{
 		addr_map[addr]->type = typ;
 		addr_map[addr]->owner = player;
+		player->properties.insert(addr_map[addr]);
 		switch (typ)
 		{
 		case Building::Basement:
