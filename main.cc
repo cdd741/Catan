@@ -362,6 +362,9 @@ int main(int argc, char* argv[])
 						string file;
 						cin >> file;
 						// Add Code Here
+						ofstream save(file);
+						save << currTurn << endl;
+						board.saveTo(save);
 					}
 					else if (cmd == "next") {
 						++currTurn;

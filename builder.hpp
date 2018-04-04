@@ -5,6 +5,8 @@
 #include <vector>
 #include <iostream>
 #include <unordered_set>
+#include <sstream>
+
 #include "player.hpp"
 #include "resource.hpp"
 #include "status.hpp"
@@ -37,6 +39,13 @@ public:
 	bool hasAnyResources() const
 	{
 		return nBrick + nEnergy + nGlass + nHeat + nWifi;
+	}
+
+	std::string save()
+	{
+		std::stringstream ss;
+		ss << nBrick << ' ' << nEnergy << ' ' << nGlass << ' ' << nHeat << ' ' << nWifi;
+		return ss.str();
 	}
 
 	std::string loseRandom()
