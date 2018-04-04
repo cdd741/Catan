@@ -74,6 +74,11 @@ public:
 	unsigned int index = -1;
 	unsigned int roll;	// associated roll # for this Tile to produce resources
 
+	std::string save() const
+	{
+		return std::to_string((int)type) + ' ' + std::to_string(roll);
+	}
+
 protected:
 	size_t nResources;
 };

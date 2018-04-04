@@ -66,8 +66,8 @@ Status Board::movingGeese(int tileidx) {
 	return Status::OK;
 }
 
-Status Board::buildRoad(Builder* player, int address) {
-	return road_map[address]->build(player);
+Status Board::buildRoad(Builder* player, int address, bool bInitial) {
+	return road_map[address]->build(player, bInitial);
 }
 
 Status Board::buildRes(Builder* player, int address, bool bInitial) {

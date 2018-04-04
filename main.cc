@@ -14,24 +14,42 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+	Layout * layout = nullptr;
+	int currTurn = 0;
+	vector<Builder*> players;
+	vector<string> players_data;
+	int loaded_geese = -1;
 	try {
 		while (true) {
-			Layout * layout = nullptr;
-			vector<Builder*> players;
+			
 			string fname{ "layout.txt" };
 
 			for (int i = 1; i < argc; ++i) {
-				if (argv[i] == "-seed") {
+				if (argv[i] == string("-seed")) {
 					stringstream ss{ argv[++i] };
 					int n;
 					ss >> n;
 					Dice::seed(n);
 				}
-				else if (argv[i] == "-load") {}
-				else if (argv[i] == "-board") {
+				else if (argv[i] == string("-load"))
+				{
+					ifstream in(argv[++i]);
+					in >> currTurn;
+					in.ignore();
+
+					for (auto i = 0; i < 4; i++)
+					{
+						string s;
+						getline(in, s);
+						players_data.push_back(s);
+					}
+					layout = new Layout(in, 9);
+					in >> loaded_geese;
+				}
+				else if (argv[i] == string("-board")) {
 					fname = argv[++i];
 				}
-				else if (argv[i] == "-random-board") { layout = new RandomLayout(9); }
+				else if (argv[i] == string("-random-board")) { layout = new RandomLayout(9); }
 			}
 
 			if (!layout)
@@ -41,8 +59,74 @@ int main(int argc, char* argv[])
 			}
 			Board board(layout);
 			board.assignUIIndexes();
-			cout << board;
 
+			if (players_data.size())	// loading
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					stringstream ss(players_data[i]);
+					
+					switch (i)
+					{
+					case 0:
+						players.push_back(new Builder(ss, Player::Blue));
+						break;
+					case 1:
+						players.push_back(new Builder(ss, Player::Red));
+						break;
+					case 2:
+						players.push_back(new Builder(ss, Player::Orange));
+						break;
+					case 3:
+						players.push_back(new Builder(ss, Player::Yellow));
+						break;
+					}
+					
+					std::string s;
+					ss >> s;	// 'r'
+					assert(s == "r");
+
+					// roads
+					while (ss >> s)
+					{
+						if (s == "h") break;
+						std::stringstream sss(s);
+						int addr;
+						sss >> addr;
+						board.buildRoad(players.back(), addr, true);	// initial road, simply assign as succ.
+					}
+
+					// houses
+					while (true)
+					{
+						int addr;
+						if (!(ss >> addr)) break;
+						char typ;
+						ss >> typ;
+						switch (typ)
+						{
+						case 'B':
+							board.load_residence(players.back(), addr, Building::Basement);
+							break;
+						case 'H':
+							board.load_residence(players.back(), addr, Building::House);
+							break;
+						case 'T':
+							board.load_residence(players.back(), addr, Building::Tower);
+							break;
+						default:
+							throw "err";
+						};
+
+					}
+				}
+				if (loaded_geese != -1)
+				{
+					board.setGeese(loaded_geese);
+				}
+			}
+
+			cout << board;
 
 			if (players.size() == 0) {
 				players.push_back(new Builder(Player::Blue));
@@ -79,13 +163,14 @@ int main(int argc, char* argv[])
 					++i;
 				}
 			}
+
 			board.getPlayers(players);
 
 			// Add Code Here
 			string cmd;
 			Builder* player;
 			bool won = false;
-			int currTurn = 0;
+			
 
 			// game play
 			while (true) {
@@ -208,7 +293,6 @@ int main(int argc, char* argv[])
 												<< " from builder " << Player::to_string(n->colour) 
 												<< '.' << endl;
 
-											n->useResource(p);
 										}
 									}
 									if (!bHandled) cout << "Invalid." << endl;
