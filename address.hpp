@@ -21,10 +21,11 @@ public:
 	Status build(Builder * owner, bool bInitial = false);
 	friend std::ostream &operator<<(std::ostream &out, const Road &r);	
 	Builder* owned() const { return owner; }
+	std::unordered_set<Building*> neighbours;
+
 protected:
 	bool built = false;
 	Builder* owner = nullptr;
-	std::unordered_set<Building*> neighbours;
 };
 
 
