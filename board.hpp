@@ -3,6 +3,7 @@
 #define BOARD_H
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <unordered_map>
 #include <queue>
@@ -429,6 +430,49 @@ public:
 		return v;
 	}
 
+	void saveTo(std::ofstream & out)
+	{
+		std::unordered_map<Builder*, std::vector<Road*>> m_r;
+		for (auto& p : roads)
+		{
+			if (p.second && p.second->owned())
+				m_r[p.second->owned()].push_back(p.second);
+		}
+
+		for (auto & b : builders)
+		{
+			out << b->save();
+			out << " r";
+			for (auto & ele : m_r[b])
+				out << ' ' << ele->ID;
+			out << " h";
+			for (auto & ele : b->properties)
+			{
+				out << ' ' << ele->ID << ' ';
+				switch (ele->type)
+				{
+				case Building::Basement:
+					out << 'B';
+					break;
+				case Building::House:
+					out << 'H';
+					break;
+				case Building::Tower:
+					out << 'T';
+					break;
+
+				}
+			}
+			out << std::endl;
+		}
+
+		out << *this;
+		if (Geese)
+			out << Geese->index << std::endl;
+		else
+			out << -1 << std::endl;
+
+	}
 
 	void assignUIIndexes()
 	{
