@@ -10,15 +10,15 @@ void Tile::distribute() {
 		if (type == TileType::Brick) {
 			if (b->type == Building::Basement) {
 				(b->owned())->addResources(1, 0, 0, 0, 0);
-				(b->owned())->iHeat += 1;
+				(b->owned())->iBrick += 1;
 			}
 			if (b->type == Building::House) {
 				(b->owned())->addResources(2, 0, 0, 0, 0);
-				(b->owned())->iHeat += 2;
+				(b->owned())->iBrick += 2;
 			}
 			if (b->type == Building::Tower) {
 				(b->owned())->addResources(3, 0, 0, 0, 0);
-				(b->owned())->iHeat += 3;
+				(b->owned())->iBrick += 3;
 			}
 		}
 		if (type == TileType::Energy) {

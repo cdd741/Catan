@@ -57,9 +57,10 @@ int main(int argc, char* argv[])
 					else break;
 
 					cout << "Builder " << Player::to_string(players[idx]->colour) << ", ";
-					cout << "where do you want to build a basement?" << endl << ">";
+					cout << "where do you want to build a basement?" << endl;
 					int place;
 					while (true) {
+						cout << ">";
 						cin >> place;
 						if (cin.fail()) {
 							cin.clear();
@@ -97,7 +98,7 @@ int main(int argc, char* argv[])
 					cout << ">";
 					cin >> cmd;
 
-					if (cin.eof()) throw;
+					if (cin.eof()) throw "end";
 					if (cmd == "load")
 					{
 						bLoaded = true;
@@ -120,7 +121,7 @@ int main(int argc, char* argv[])
 								cout << ">";
 								cin >> roll;
 
-								if (cin.eof()) throw;
+								if (cin.eof()) throw "end";
 								if (cin.fail()) {
 									cin.clear();
 									cin.ignore();
@@ -157,7 +158,7 @@ int main(int argc, char* argv[])
 								cout << ">";
 								cin >> place;
 
-								if (cin.eof()) throw;
+								if (cin.eof()) throw "end";
 								if (cin.fail()) {
 									cin.clear();
 									cin.ignore();
@@ -193,7 +194,7 @@ int main(int argc, char* argv[])
 								cout << ">";
 								cin >> tok;
 
-								if (cin.eof()) throw;
+								if (cin.eof()) throw "end";
 								bool bHandled = false;
 								while (!bHandled)
 								{
@@ -229,7 +230,7 @@ int main(int argc, char* argv[])
 					cout << ">";
 					cin >> cmd;
 
-					if (cin.eof()) throw;
+					if (cin.eof()) throw "end";
 
 					else if (!cin)
 					{
@@ -245,6 +246,7 @@ int main(int argc, char* argv[])
 						for (auto &prop : players[currTurn]->properties) {
 							cout << prop->ID << " ";
 						}
+						cout << endl;
 					}
 					else if (cmd == "build-road") {
 						cout << "Place enter address." << endl;
@@ -252,7 +254,7 @@ int main(int argc, char* argv[])
 						cout << ">";
 						cin >> criteriaNum;
 
-						if (cin.eof()) throw;
+						if (cin.eof()) throw "end";
 						if (cin.fail()) {
 							cin.clear();
 							cin.ignore();
@@ -272,23 +274,25 @@ int main(int argc, char* argv[])
 						cout << ">";
 						cin >> criteriaNum;
 
-						if (cin.eof()) throw;
-						if (cin.fail()) {
+						if (cin.eof()) throw "end";
+						else if (cin.fail()) {
 							cin.clear();
 							cin.ignore();
 							cout << "Invalid input." << endl;
+							continue;
 						}
-
-						if (criteriaNum > 53) {
+						else if (criteriaNum > 53) {
 							cout << "Invalid input." << endl;
 							continue;
 						}
-						Status s = board.buildRes(player, criteriaNum);
-						//output depends on s: cant build/ no enough resources
-						if (s != Status::OK) cout << s << endl;
-						if (player->winCheck()) {
-							won = true;
-							break;
+						else {
+							Status s = board.buildRes(player, criteriaNum);
+							//output depends on s: cant build/ no enough resources
+							if (s != Status::OK) cout << s << endl;
+							if (player->winCheck()) {
+								won = true;
+								break;
+							}
 						}
 					}
 					else if (cmd == "improve") {
@@ -297,14 +301,14 @@ int main(int argc, char* argv[])
 						cout << ">";
 						cin >> criteriaNum;
 
-						if (cin.eof()) throw;
-						if (cin.fail()) {
+						if (cin.eof()) throw "end";
+						else if (cin.fail()) {
 							cin.clear();
 							cin.ignore();
 							cout << "Invalid input." << endl;
+							continue;
 						}
-
-						if (criteriaNum > 53) {
+						else if (criteriaNum > 53) {
 							cout << "Invalid input." << endl;
 							continue;
 						}
@@ -317,34 +321,59 @@ int main(int argc, char* argv[])
 						}
 					}
 					else if (cmd == "trade") {
-						string colour, responce;
+						string responce, colour;
 						resourceType give, take;
 						cout << "Please enter who do you want to trade with." << endl << ">";
-						cin >> colour;
-						if (cin.eof()) throw;
-						cout << "Please enter what do you want to give." << endl << ">";
-						cin >> give;
-						if (cin.eof()) throw;
-						cout << "Please enter what do you want to take." << endl << ">";
-						cin >> take;
-						if (cin.eof()) throw;
-						cout << "Does " << colour << "accept this offer?" << endl << ">";
-						cin >> responce;
-						if (cin.eof()) throw;
-
 						while (true) {
+							cin >> colour;
+							if (colour == "Blue" || colour == "Red" || colour == "Orange" || colour == "Yellow") break;
+							cout << "Wrong input, please check the first letter is capitalized." << endl << '>';
+						}
+						if (cin.eof()) throw "end";
+						cout << "Please enter what do you want to give." << endl;
+						while (true) {
+							cout << ">";
+							try {
+								cin >> give;
+							} catch(string &s) {
+								if (s == "eof") throw "end";
+								else cout << "Invalid input." << endl;
+								continue;
+							}
+							break;
+						}
+						cout << "Please enter what do you want to take." << endl;
+						while (true) {
+							cout << ">";
+							try {
+								cin >> take;
+							}
+							catch (string &s) {
+								if (s == "eof") throw;
+								else cout << "Invalid input." << endl;
+							}
+							break;
+						}
+						cout << "Does " << colour << " accept this offer? (yes/no)" << endl;
+						while (true) {
+							cout << ">";
+							cin >> responce;
+							if (cin.eof()) throw "end";
 							if (responce == "yes") {
 								Builder * player2;
 								if (colour == "Blue") player2 = players[0];
 								else if (colour == "Red") player2 = players[1];
 								else if (colour == "Orange") player2 = players[2];
-								else if (colour == "Yello") player2 = players[3];
+								else if (colour == "Yellow") player2 = players[3];
 								/* self-assign check?*/
 								Status s = player->trade(player2, give, take);
+								break;
+							}
+							else if (responce == "no") break;
+							else {
+								cout << "Invalid command" << endl;
 								continue;
 							}
-							else if (responce == "no") continue;
-							else cout << "Invalid command" << endl;
 						}
 
 					}
@@ -386,6 +415,7 @@ int main(int argc, char* argv[])
 				cout << Player::to_string(player->colour) << " won!" << endl;
 				cout << "Would you like to play again? (yes/no)" << endl;
 				while (true) {
+					cout << '<';
 					cin >> cmd;
 					if (cmd == "yes") break;
 					else if (cmd == "no") break;
@@ -397,7 +427,7 @@ int main(int argc, char* argv[])
 			if (cmd != "yes") break;
 		}
 	}
-	catch(...) {
+	catch(string &str) {
 		// when eof
 		// Save as backup.sv
 	}

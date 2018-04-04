@@ -7,8 +7,9 @@ std::istream &operator>>(std::istream &in, resourceType &b)
 
 	if (mapping.count(token))
 		b = mapping.at(token);
-	else
-		throw;
+	else if(in.eof())
+		throw "eof";
+	else throw "Invalid";
 
 	return in;
 }

@@ -32,6 +32,7 @@ public:
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
+	bool addResource(resourceType typ, size_t ct = 1);
 	void half();
 
 	bool hasAnyResources() const

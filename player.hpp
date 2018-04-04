@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -29,5 +30,6 @@ public:
 		return "err";
 	}
 };
+
 
 #endif // !PLAYER_H

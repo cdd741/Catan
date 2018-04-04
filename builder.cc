@@ -9,7 +9,7 @@ bool Builder::winCheck() {
 }
 
 void Builder::playerStatus() {
-	cout << Player::to_string(colour) << " has " << score << "building porints,";
+	cout << Player::to_string(colour) << " has " << score << " building points,";
 	cout << nBrick << " brick, ";
 	cout << nEnergy << " energy, ";
 	cout << nGlass << " glass, ";
@@ -51,8 +51,10 @@ void Builder::addResources(size_t nBrick, size_t nEnergy, size_t nGlass, size_t 
 
 Status Builder::trade(Builder* other, resourceType item1, resourceType item2) {
 	if (chkResource(item1) && other->chkResource(item2)) {
-		useResource(item2); 
-		other->useResource(item1);
+		useResource(item1,1);
+		addResource(item2, 1);
+		other->useResource(item2, 1);
+		other->addResource(item1, 1);
 		return Status::OK;
 	}
 	// Not enough resources
@@ -93,15 +95,33 @@ bool Builder::useResource(resourceType typ, size_t ct)
 	switch (typ)
 	{
 	case resourceType::BRICK:
-		return nBrick >= ct;
+		return nBrick -= ct;
 	case resourceType::ENERGY:
-		return nEnergy >= ct;
+		return nEnergy -= ct;
 	case resourceType::GLASS:
-		return nGlass >= ct;
+		return nGlass -= ct;
 	case resourceType::HEAT:
-		return nHeat >= ct;
+		return nHeat -= ct;
 	case resourceType::WIFI:
-		return nWifi >= ct;
+		return nWifi -= ct;
+	}
+	throw;
+}
+
+bool Builder::addResource(resourceType typ, size_t ct)
+{
+	switch (typ)
+	{
+	case resourceType::BRICK:
+		return nBrick += ct;
+	case resourceType::ENERGY:
+		return nEnergy += ct;
+	case resourceType::GLASS:
+		return nGlass += ct;
+	case resourceType::HEAT:
+		return nHeat += ct;
+	case resourceType::WIFI:
+		return nWifi += ct;
 	}
 	throw;
 }
