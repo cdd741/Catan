@@ -149,6 +149,7 @@ int main(int argc, char* argv[])
 					while (true) {
 						cout << ">";
 						cin >> place;
+						if (cin.eof()) throw EOFException();
 						if (cin.fail()) {
 							cin.clear();
 							cin.ignore();
