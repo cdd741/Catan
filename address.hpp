@@ -18,7 +18,7 @@ class Tile;
 class Road{
 public:
 	unsigned int ID = -1;
-	Status build(Builder * owner);
+	Status build(Builder * owner, bool bInitial = false);
 	friend std::ostream &operator<<(std::ostream &out, const Road &r);	
 	Builder* owned() const { return owner; }
 protected:

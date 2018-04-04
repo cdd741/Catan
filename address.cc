@@ -9,7 +9,12 @@
 
 using namespace std;
 
-Status Road::build(Builder * owner) {
+Status Road::build(Builder * owner, bool bInitial) {
+	if (bInitial)
+	{
+		this->owner = owner;
+		return Status::OK;
+	}
 	if (owned()) return Status::cantBuildHere;
 	for (auto& b : neighbours) {
 		if (b->owned() || b->checkRoadNeighbour()) {

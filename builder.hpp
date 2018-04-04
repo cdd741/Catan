@@ -31,10 +31,10 @@ public:
 	void addResources(size_t nBrick = 0, size_t nEnergy = 0, size_t nGlass = 0, size_t nHeat = 0, size_t nWifi = 0);
 	Status trade(Builder* other, resourceType item1, resourceType item2);
 	Status improve(int address);
+	bool Builder::addResource(resourceType typ, size_t ct);
 	friend std::ostream &operator>>(std::istream &in, const Builder &b);
 	bool chkResource(resourceType typ, size_t ct = 1);
 	bool useResource(resourceType typ, size_t ct = 1);
-	bool addResource(resourceType typ, size_t ct = 1);
 	void half();
 
 	bool hasAnyResources() const
@@ -89,6 +89,15 @@ public:
 
 	std::unordered_set<Building*> properties;
 	Builder(Player::col colour) :colour{ colour } {}
+	Builder(std::istream& loaded, Player::col colour) :Builder(colour) 
+	{
+		loaded >> nBrick;
+		loaded >> nEnergy;
+		loaded >> nGlass;
+		loaded >> nHeat;
+		loaded >> nWifi;
+	}
+
 	Player::col colour;
 	size_t score = 0;
 

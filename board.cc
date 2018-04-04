@@ -66,8 +66,8 @@ Status Board::movingGeese(int tileidx) {
 	return Status::OK;
 }
 
-Status Board::buildRoad(Builder* player, int address) {
-	return road_map[address]->build(player);
+Status Board::buildRoad(Builder* player, int address, bool bInitial) {
+	return road_map[address]->build(player, bInitial);
 }
 
 Status Board::buildRes(Builder* player, int address, bool bInitial) {
@@ -82,7 +82,6 @@ Status Board::improve(Builder* player, int address) {
 void Board::diceRoll(int dice) {
 	bool anyoneGained = false;
 	for (auto & t : layout->tiles) {
-		if (t.second == Geese) continue;
 		if (t.second->roll == dice) {
 			t.second->distribute();
 		}

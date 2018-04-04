@@ -433,7 +433,7 @@ public:
 	void saveTo(std::ofstream & out)
 	{
 		std::unordered_map<Builder*, std::vector<Road*>> m_r;
-		for (auto& p : roads)
+		for (auto& p : road_map)
 		{
 			if (p.second && p.second->owned())
 				m_r[p.second->owned()].push_back(p.second);
@@ -465,8 +465,12 @@ public:
 			}
 			out << std::endl;
 		}
+		out << layout->tiles[0]->save();
+		for (auto i = 1; i < 19; i++)
+			out << ' ' << layout->tiles[i]->save();
 
-		out << *this;
+		out << std::endl;
+
 		if (Geese)
 			out << Geese->index << std::endl;
 		else
@@ -610,8 +614,20 @@ public:
 	}
 	
 	Status movingGeese(int tileidx);
-	Status buildRoad(Builder* player, int address);
+	Status buildRoad(Builder* player, int address, bool bInitial = false);
 	Status buildRes(Builder* player, int address, bool bInitial = false);
+	void load_residence(Builder* player, int addr, Building::Type typ)	// for loading usage only
+	{
+		addr_map[addr]->type = typ;
+		addr_map[addr]->owner = player;
+	}
+
+	void setGeese(int addrTile)	// load only
+	{
+		Geese = layout->tiles[addrTile];
+		Geese->bProduction = false;
+	}
+
 	Status improve(Builder* player, int address);
 	void playerStatus() {
 		for (auto b : builders)
@@ -621,8 +637,6 @@ public:
 	void getPlayers(std::vector<Builder*> players) {
 		for (auto b : players) builders.emplace_back(b);
 	}
-
-
 
 	//virtual	~Board() {}
 	~Board() {
@@ -653,7 +667,6 @@ protected:
 	std::unordered_map<unsigned int, Road*> road_map;
 
 	std::vector<Builder*> builders;
-	std::unordered_map<unsigned int, Road*> roads;
 	
 
 };
