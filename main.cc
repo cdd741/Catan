@@ -13,6 +13,7 @@
 
 #ifdef USING_XWINDOW
 #include "window.h"
+Xwindow* pWindow = nullptr;
 #endif
 
 #ifdef USING_SDL2
@@ -35,14 +36,11 @@ int main(int argc, char* argv[])
 	thread gui_thread(GRAPHICS::start_threaded_sdl2, &shared);
 #endif
 
-#ifdef USING_XWINDOW
-	Xwindow window(800, 600);
-#endif
-
 	Layout * layout = nullptr;
 	string layout_fname{ "layout.txt" };
 	vector<string> players_data;
 	int loaded_geese = -1;
+	bool xEnabled = true;
 
 	try {
 		while (true) {
@@ -76,6 +74,10 @@ int main(int argc, char* argv[])
 					layout_fname = argv[++i];
 				}
 				else if (argv[i] == string("-random-board")) { layout = new RandomLayout(9); }
+				else if (argv[i] == string("-disable-graphics"))
+				{
+					xEnabled = false;
+				}
 			}
 
 			if (!layout)
@@ -91,7 +93,7 @@ int main(int argc, char* argv[])
 				for (int i = 0; i < 4; i++)
 				{
 					stringstream ss(players_data[i]);
-					
+
 					switch (i)
 					{
 					case 0:
@@ -107,7 +109,7 @@ int main(int argc, char* argv[])
 						players.push_back(new Builder(ss, Player::Yellow));
 						break;
 					}
-					
+
 					std::string s;
 					ss >> s;	// 'r'
 					assert(s == "r");
@@ -154,7 +156,10 @@ int main(int argc, char* argv[])
 
 			cout << board;
 #ifdef USING_XWINDOW
-			board.render(&window);
+			if (xEnabled)
+				pWindow = new Xwindow(600, 600);
+
+			board.render(pWindow);
 #endif
 			if (players.size() == 0) {
 				players.push_back(new Builder(Player::Blue));
@@ -189,9 +194,9 @@ int main(int argc, char* argv[])
 
 						cout << Status::cantBuildHere << endl;
 					}
-					#ifdef USING_XWINDOW
+#ifdef USING_XWINDOW
 					board.render();
-					#endif
+#endif
 					++i;
 				}
 			}
@@ -202,7 +207,7 @@ int main(int argc, char* argv[])
 			string cmd;
 			Builder* player;
 			bool won = false;
-			
+
 			try
 			{
 				// game play
@@ -280,38 +285,38 @@ int main(int argc, char* argv[])
 									stringstream ss(tok);
 									ss >> place;
 
-								if (ss.fail()) 
-									cout << "Invalid input." << endl;
-								if (place > 53)
-									cout << "Invalid input." << endl;
-								//BUG!!! Throw has occured
-							} while ((stat = board.movingGeese(place)) != Status::OK);
-							#ifdef USING_XWINDOW
-							board.render();
-							#endif
-							bool hasNeighbours = false;
-							unordered_set<Builder*> nei;
-							for (auto& b : board.neighbours(place))
-							{
-								if (b->owned() && b->owned() != player && b->owned()->hasAnyResources())
+									if (ss.fail())
+										cout << "Invalid input." << endl;
+									if (place > 53)
+										cout << "Invalid input." << endl;
+									//BUG!!! Throw has occured
+								} while ((stat = board.movingGeese(place)) != Status::OK);
+#ifdef USING_XWINDOW
+								board.render();
+#endif
+								bool hasNeighbours = false;
+								unordered_set<Builder*> nei;
+								for (auto& b : board.neighbours(place))
 								{
-									hasNeighbours = true;
-									nei.insert(b->owned());
+									if (b->owned() && b->owned() != player && b->owned()->hasAnyResources())
+									{
+										hasNeighbours = true;
+										nei.insert(b->owned());
+									}
 								}
-							}
-							if (hasNeighbours)
-							{
-								cout << "Builder " << Player::to_string(player->colour) << " can choose to steal from";
-								stringstream ss;
-								for (auto & n : nei)
+								if (hasNeighbours)
 								{
-									ss << ' ' << Player::to_string(n->colour) << ',';
-								}
-								cout << ss.str().substr(0, ss.str().length() - 1) << '.' << endl;
-								cout << "Choose a builder to steal from." << endl;
-								string tok;
-								cout << ">";
-								cin >> tok;
+									cout << "Builder " << Player::to_string(player->colour) << " can choose to steal from";
+									stringstream ss;
+									for (auto & n : nei)
+									{
+										ss << ' ' << Player::to_string(n->colour) << ',';
+									}
+									cout << ss.str().substr(0, ss.str().length() - 1) << '.' << endl;
+									cout << "Choose a builder to steal from." << endl;
+									string tok;
+									cout << ">";
+									cin >> tok;
 
 									if (cin.eof()) throw EOFException();
 									bool bHandled = false;
@@ -346,13 +351,13 @@ int main(int argc, char* argv[])
 
 					}
 
-				while (true) {
+					while (true) {
 #ifdef USING_XWINDOW
-						board.render(&window);
+						board.render();
 #endif
-					cout << "Please enter your command, enter <help> for more information." << endl;
-					cout << ">";
-					cin >> cmd;
+						cout << "Please enter your command, enter <help> for more information." << endl;
+						cout << ">";
+						cin >> cmd;
 
 						if (cin.eof()) throw EOFException();
 
@@ -456,7 +461,7 @@ int main(int argc, char* argv[])
 								try {
 									cin >> colour;
 								}
-								catch(string &s){
+								catch (string &s) {
 									cout << "Wrong input, please check the first letter is capitalized." << endl << '>';
 									continue;
 								}
@@ -570,12 +575,20 @@ int main(int argc, char* argv[])
 
 			// destruct
 
+#ifdef USING_XWINDOW
+			if (pWindow)
+			{
+				delete pWindow;
+				pWindow = nullptr;
+			}
+#endif
+
 			players.clear();
 
 			if (cmd != "yes") break;
 		}
 	}
-	catch(string &str) {
+	catch (string &str) {
 
 	}
 
@@ -583,6 +596,14 @@ int main(int argc, char* argv[])
 	shared.push(GRAPHICS::Event(GRAPHICS::Event::QUIT));
 	gui_thread.join();
 	SDL_Quit();
+#endif
+
+#ifdef USING_XWINDOW
+	if (pWindow)
+	{
+		delete pWindow;
+		pWindow = nullptr;
+	}
 #endif
 
 	return 0;
