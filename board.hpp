@@ -97,6 +97,158 @@ public:
 	}
 };
 
+#ifdef USING_SDL2
+
+class GraphicalGrid
+{
+	SDL_Surface * surface;
+public:
+	std::unordered_map<const void*, Coordinate2D> desired;
+	Layout * layout;
+
+	GraphicalGrid(Layout *layout = nullptr) : layout{ layout }
+	{
+		surface = SDL_CreateRGBSurface(0, 400, 433, 32, 0, 0, 0, 0);	// 0 in alpha means no alpha
+		SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0, 0, 0));
+	}
+
+	~GraphicalGrid()
+	{
+		SDL_FreeSurface(surface);
+	}
+
+	friend GraphicalGrid& operator<<(GraphicalGrid& out, const Tile& tile)
+	{
+		auto desired = out.desired[(void*)&tile];
+		assert(desired != make_coord(-1, -1));
+
+
+	}
+};
+
+#endif
+
+#ifdef USING_XWINDOW
+#include "window.h"
+
+class GraphicalGrid
+{
+public:
+	std::unordered_map<const void*, Coordinate2D> desired;
+	Layout * layout;
+	Xwindow* window;
+
+	GraphicalGrid(Xwindow* window, Layout *layout = nullptr) : layout{ layout }, window{ window }
+	{
+		
+	}
+
+	~GraphicalGrid()
+	{
+
+	}
+
+	void clear()
+	{
+		window->fillRectangle(0, 0, window->w(), window->h(), 0);
+	}
+
+	static int toColor(Player::col typ)
+	{
+		switch (typ) {
+		case Player::Blue:
+			return Xwindow::Blue;
+		case Player::Red:
+			return Xwindow::Red;
+		case Player::Yellow:
+			return Xwindow::Yellow;
+		case Player::Orange:
+			return Xwindow::Orange;
+		}
+	}
+
+	friend GraphicalGrid& operator<<(GraphicalGrid& out, const Building& b)
+	{
+		auto desired = out.desired[(void*)&b];
+		assert(desired != make_coord(-1, -1));
+		if (b.owned())
+		{
+			out.window->fillCircle(desired.first, desired.second, 20, GraphicalGrid::toColor(b.owned()->colour));
+			switch(b.type)
+			{
+				case Building::Basement:
+					out.window->drawString(desired.first - 3, desired.second + 2, "B", 1);
+					break;
+				case Building::House:
+					out.window->drawString(desired.first - 3, desired.second + 2, "H", 1);
+					break;
+				case Building::Tower:
+					out.window->drawString(desired.first - 3, desired.second + 2, "T", 1);
+					break;
+			}
+			
+		}
+		else
+		{
+			out.window->fillCircle(desired.first, desired.second, 20, 1);
+			out.window->drawString(desired.first - 3, desired.second + 2, std::to_string(b.ID), 0);
+		}
+		return out;
+	}
+
+	friend GraphicalGrid& operator<<(GraphicalGrid& out, const Tile& tile)
+	{
+		auto desired = out.desired[(void*)&tile];
+		assert(desired != make_coord(-1, -1));
+
+		out.desired[tile.info.lu] = make_coord(desired.first, desired.second);
+		out << *tile.info.lu;
+
+		out.window->drawLine(desired.first + 10, desired.second, desired.first + 40, desired.second);
+
+		out.desired[tile.info.ru] = make_coord(desired.first + 50, desired.second);
+		out << *tile.info.ru;
+
+		out.desired[tile.info.l] = make_coord(desired.first-25, desired.second + 44);
+		out << *tile.info.l;
+
+		out.window->drawLine(desired.first - 25 + 5, desired.second + 44 - 9, desired.first - 5, desired.second + 9);
+
+		out.desired[tile.info.ll] = make_coord(desired.first, desired.second + 44 * 2);
+		out << *tile.info.ll;
+		
+		out.window->drawLine(desired.first - 5, desired.second + 44 * 2 - 9, desired.first - 25 + 5, desired.second + 44 + 9);
+		
+		out.desired[tile.info.rl] = make_coord(desired.first + 50, desired.second + 44*2);
+		out << *tile.info.rl;
+
+		out.window->drawLine(desired.first + 10, desired.second + 44 * 2, desired.first + 40, desired.second + 44 * 2);
+		
+		out.desired[tile.info.r] = make_coord(desired.first+75, desired.second + 44);
+		out << *tile.info.r;
+		
+		out.window->drawLine(desired.first + 50 + 5, desired.second + 44 * 2 - 9, desired.first + 50 + 25 - 5, desired.second + 44 + 9);
+		
+		out.window->drawLine(desired.first + 50 + 5, desired.second + 9, desired.first + 50 + 25 - 5, desired.second + 44 - 9);
+
+		Tile *left, *right;
+
+		if (left = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second)])
+		{
+			out.desired[left] = make_coord(desired.first - 75, desired.second + 44);
+			out << *left;
+		}
+
+		if (right = out.layout->graph[make_coord(tile.coord.first + 1, tile.coord.second + 1)])
+		{
+			out.desired[right] = make_coord(desired.first + 75, desired.second + 44);
+			out << *right;
+		}
+		return out;
+	}
+};
+#endif
+
 class TerminalGrid
 {
 	std::map<size_t, char*> grid;
@@ -651,7 +803,6 @@ public:
 		for (auto b : players) builders.emplace_back(b);
 	}
 
-	//virtual	~Board() {}
 	~Board() {
 		delete layout;
 		for (auto & b : buildings) {
@@ -669,6 +820,20 @@ public:
 	{
 		return layout->tiles[tileAddr]->buildings;
 	}
+
+#ifdef USING_XWINDOW
+	Xwindow* window = nullptr;
+	void setWindow(Xwindow* window) {this->window = window;}
+	void render(Xwindow* window = nullptr)
+	{
+		if (window) setWindow(window);
+		if (!this->window) return;
+		GraphicalGrid grid(this->window, layout);
+		grid.clear();
+		grid.desired[layout->graph[make_coord(0, 0)]] = make_coord(225, 20);
+		grid << *layout->graph[make_coord(0, 0)];
+	}
+#endif
 
 protected:
 	Layout* layout = nullptr;

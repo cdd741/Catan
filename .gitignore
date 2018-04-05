@@ -290,3 +290,7 @@ __pycache__/
 *.o
 *.d
 /a5exec
+/SDL2maind.lib
+/SDL2main.lib
+/SDL2d.lib
+/SDL2.lib

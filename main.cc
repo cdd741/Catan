@@ -1,21 +1,45 @@
-#include "board.hpp"
-#include "builder.hpp"
-#include "resource.hpp"
-#include "dice.hpp"
-#include "status.hpp"
-
 #include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <ctime>
 
+#include "board.hpp"
+#include "builder.hpp"
+#include "resource.hpp"
+#include "dice.hpp"
+#include "status.hpp"
+#include <thread>
+
+#ifdef USING_XWINDOW
+#include "window.h"
+#endif
+
+#ifdef USING_SDL2
+#define SDL_MAIN_HANDLED
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
+#include "graphics.hpp"
+#endif
+
 using namespace std;
 
 int main(int argc, char* argv[])
 {
+#ifdef USING_SDL2
+	SDL_SetMainReady();
+	SDL_Init(SDL_INIT_VIDEO);
+
+
+	GRAPHICS::SharedContext shared;
+	thread gui_thread(GRAPHICS::start_threaded_sdl2, &shared);
+#endif
+
+#ifdef USING_XWINDOW
+	Xwindow window(800, 600);
+#endif
+
 	Layout * layout = nullptr;
-	
 	string layout_fname{ "layout.txt" };
 	vector<string> players_data;
 	int loaded_geese = -1;
@@ -129,7 +153,9 @@ int main(int argc, char* argv[])
 			}
 
 			cout << board;
-
+#ifdef USING_XWINDOW
+			board.render(&window);
+#endif
 			if (players.size() == 0) {
 				players.push_back(new Builder(Player::Blue));
 				players.push_back(new Builder(Player::Red));
@@ -162,6 +188,9 @@ int main(int argc, char* argv[])
 
 						cout << Status::cantBuildHere << endl;
 					}
+					#ifdef USING_XWINDOW
+					board.render();
+					#endif
 					++i;
 				}
 			}
@@ -256,6 +285,9 @@ int main(int argc, char* argv[])
 									cout << "Invalid input." << endl;
 								//BUG!!! Throw has occured
 							} while ((stat = board.movingGeese(place)) != Status::OK);
+							#ifdef USING_XWINDOW
+							board.render();
+							#endif
 							bool hasNeighbours = false;
 							unordered_set<Builder*> nei;
 							for (auto& b : board.neighbours(place))
@@ -314,6 +346,9 @@ int main(int argc, char* argv[])
 				}
 
 				while (true) {
+#ifdef USING_XWINDOW
+						board.render(&window);
+#endif
 					cout << "Please enter your command, enter <help> for more information." << endl;
 					cout << ">";
 					cin >> cmd;
@@ -524,6 +559,12 @@ int main(int argc, char* argv[])
 		// when eof
 		// Save as backup.sv
 	}
+
+#ifdef USING_SDL2
+	shared.push(GRAPHICS::Event(GRAPHICS::Event::QUIT));
+	gui_thread.join();
+	SDL_Quit();
+#endif
 
 	return 0;
 

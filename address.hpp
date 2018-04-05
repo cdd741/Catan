@@ -34,9 +34,7 @@ class Building
 public:
 	Builder * owner = nullptr;
 	enum Type
-	{
-		None, Basement, House, Tower
-	};
+	{ None, Basement, House, Tower };
 
 	bool checkRoadNeighbour();
 	Status build(Builder * who, bool bInitial = false);	// bSucceeded
@@ -47,7 +45,7 @@ public:
 
 	friend std::ostream &operator<<(std::ostream &out, const Building &b);
 	unsigned int ID = -1;
-	Type getType()const { return type; }
+	Type getType() const { return type; }
 	Builder* owned() const { return owner; }
 	Type type = None;
 protected:

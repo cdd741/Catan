@@ -98,12 +98,24 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>USING_SDL2</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="address.hpp" />
     <ClInclude Include="board.hpp" />
     <ClInclude Include="builder.hpp" />
     <ClInclude Include="dice.hpp" />
     <ClInclude Include="exception.hpp" />
+    <ClInclude Include="graphics.hpp" />
     <ClInclude Include="player.hpp" />
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="status.hpp" />
@@ -114,6 +126,7 @@
     <ClCompile Include="board.cc" />
     <ClCompile Include="builder.cc" />
     <ClCompile Include="dice.cc" />
+    <ClCompile Include="graphics.cc" />
     <ClCompile Include="main.cc" />
     <ClCompile Include="resource.cc" />
     <ClCompile Include="status.cc" />

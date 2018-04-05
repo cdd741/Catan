@@ -16,8 +16,14 @@ clean:
 
 
 simple:
-	g++ -g -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
+	g++ -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
 
 debug:
 	g++ -g -D_DEBUG -std=c++14 address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -o ./${EXEC}
+	
+gui:
+	g++ -DUSING_XWINDOW -std=c++14 -Werror=vla address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc window.cc -lX11 -o ./${EXEC}
+	
+sdl:
+	g++ -DUSING_SDL2 -std=c++14 -Werror=vla address.cc board.cc builder.cc dice.cc main.cc resource.cc status.cc tile.cc -lSDL2 -o ./${EXEC}
 	
