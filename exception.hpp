@@ -18,4 +18,17 @@ public:
 	using std::logic_error::logic_error;
 };
 
+class InvalidInputException : public std::exception
+{
+public:
+	using std::exception::exception;
+};
+
+// throws when cin.eof received, end the game and store the layout
+class EOFException : public std::exception
+{
+public:
+	using std::exception::exception;
+};
+
 #endif
