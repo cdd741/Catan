@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -Werror=vla -MMD
+CXXFLAGS = -std=c++14 -Werror=vla -MMD
 EXEC = a5exec
 OBJECTS = main.o address.o tile.o builder.o board.o resource.o status.o dice.o
 DEPENDS = ${OBJECTS:.o=.d}

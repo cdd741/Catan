@@ -531,7 +531,7 @@ int main(int argc, char* argv[])
 							cin >> file;
 							// Add Code Here
 							ofstream save(file);
-							save << currTurn << endl;
+							save << (currTurn+1 > 4 ? 0 : currTurn+1) << endl;
 							board.saveTo(save);
 						}
 						else if (cmd == "next") {
