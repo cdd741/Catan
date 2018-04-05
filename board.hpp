@@ -196,15 +196,55 @@ public:
 		return out;
 	}
 
+	friend GraphicalGrid& operator<<(GraphicalGrid& out, const Road& r)
+	{
+		auto desired = out.desired[(void*)&r];
+		assert(desired != make_coord(-1, -1));
+		out.window->drawString(desired.first, desired.second, std::to_string(r.ID), r.owned() ? GraphicalGrid::toColor(r.owned()->colour) : 1);
+		return out;
+	}
+
 	friend GraphicalGrid& operator<<(GraphicalGrid& out, const Tile& tile)
 	{
 		auto desired = out.desired[(void*)&tile];
 		assert(desired != make_coord(-1, -1));
 
+		out.window->drawString(desired.first + 14, desired.second + 33, std::to_string(tile.index));
+		out.window->drawString(desired.first + 14, desired.second + 55, std::to_string(tile.roll));
+		if (!tile.bProduction)
+			out.window->drawString(desired.first + 9, desired.second + 66, "GEESE");
+		switch (tile.type)
+		{
+		case TileType::Brick:
+			out.window->drawString(desired.first + 9, desired.second + 44, "BRICK ");
+			break;
+		case TileType::Energy:
+			out.window->drawString(desired.first + 9, desired.second + 44, "ENERGY");
+			break;
+		case TileType::Heat:
+			out.window->drawString(desired.first + 9, desired.second + 44, " HEAT ");
+			break;
+		case TileType::Glass:
+			out.window->drawString(desired.first + 9, desired.second + 44, "GLASS ");
+			break;
+		case TileType::Wifi:
+			out.window->drawString(desired.first + 9, desired.second + 44, " WIFI ");
+			break;
+		case TileType::Park:
+			out.window->drawString(desired.first + 9, desired.second + 44, "NETFLIX");
+			break;
+		default:
+			;
+		}
+
+		
 		out.desired[tile.info.lu] = make_coord(desired.first, desired.second);
 		out << *tile.info.lu;
 
 		out.window->drawLine(desired.first + 10, desired.second, desired.first + 40, desired.second);
+
+		out.desired[(tile.info.ru->isConnected(tile.info.lu))] = make_coord(desired.first + 25, desired.second + 4);
+		out << *(tile.info.ru->isConnected(tile.info.lu));
 
 		out.desired[tile.info.ru] = make_coord(desired.first + 50, desired.second);
 		out << *tile.info.ru;
@@ -214,22 +254,37 @@ public:
 
 		out.window->drawLine(desired.first - 25 + 5, desired.second + 44 - 9, desired.first - 5, desired.second + 9);
 
+		out.desired[(tile.info.lu->isConnected(tile.info.l))] = make_coord(desired.first - 15, desired.second + 22);
+		out << *(tile.info.lu->isConnected(tile.info.l));
+
 		out.desired[tile.info.ll] = make_coord(desired.first, desired.second + 44 * 2);
 		out << *tile.info.ll;
 		
 		out.window->drawLine(desired.first - 5, desired.second + 44 * 2 - 9, desired.first - 25 + 5, desired.second + 44 + 9);
 		
+		out.desired[(tile.info.ll->isConnected(tile.info.l))] = make_coord(desired.first - 15, desired.second + 44 + 22);
+		out << *(tile.info.ll->isConnected(tile.info.l));
+
 		out.desired[tile.info.rl] = make_coord(desired.first + 50, desired.second + 44*2);
 		out << *tile.info.rl;
 
 		out.window->drawLine(desired.first + 10, desired.second + 44 * 2, desired.first + 40, desired.second + 44 * 2);
 		
+		out.desired[(tile.info.ll->isConnected(tile.info.rl))] = make_coord(desired.first + 25, desired.second + 4 + 44 * 2);
+		out << *(tile.info.ll->isConnected(tile.info.rl));
+
 		out.desired[tile.info.r] = make_coord(desired.first+75, desired.second + 44);
 		out << *tile.info.r;
 		
 		out.window->drawLine(desired.first + 50 + 5, desired.second + 44 * 2 - 9, desired.first + 50 + 25 - 5, desired.second + 44 + 9);
 		
+		out.desired[(tile.info.rl->isConnected(tile.info.r))] = make_coord(desired.first + 50 + 10, desired.second + 44 + 22);
+		out << *(tile.info.rl->isConnected(tile.info.r));
+
 		out.window->drawLine(desired.first + 50 + 5, desired.second + 9, desired.first + 50 + 25 - 5, desired.second + 44 - 9);
+
+		out.desired[(tile.info.r->isConnected(tile.info.ru))] = make_coord(desired.first + 50 + 10, desired.second + 22);
+		out << *(tile.info.r->isConnected(tile.info.ru));
 
 		Tile *left, *right;
 
