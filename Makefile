@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++14 -Werror=vla -MMD
-EXEC = a5exec
+EXEC = catan
 OBJECTS = main.o address.o tile.o builder.o board.o resource.o status.o dice.o
 DEPENDS = ${OBJECTS:.o=.d}
 
