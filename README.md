@@ -32,11 +32,13 @@ At the beginning of the game, each builder chooses two initial basements to buil
 
 At the beginning of a turn, a builder can then enter any of the following three commands: 
 
+```
 • load: sets the dice of the current builder to be loaded dice 
 
 • fair: sets the dice of the current builder to be fair dice 
 
 • roll: rolls the current builder’s dice. 
+```
 
 This ends the "Beginning of the turn" phase and moves the builder to "During the turn".
 
@@ -44,6 +46,7 @@ This ends the "Beginning of the turn" phase and moves the builder to "During the
 
 During the turn, a builder can input any of the following commands: 
 
+```
 • board: prints the current board 
 
 • status: prints the current status of all builders in order from builder 0 to 3 
@@ -63,6 +66,7 @@ During the turn, a builder can input any of the following commands:
 • save <file>: saves the current game state to <file> 
 
 • help: prints out the list of commands 
+```
 
 #### End of Game 
 
